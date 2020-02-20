@@ -3,6 +3,9 @@ package com.sample.fooclientservice.service;
 import com.sample.fooclientservice.dto.FooDTOV1;
 import com.sample.fooclientservice.exception.EErrorCode;
 import com.sample.fooclientservice.exception.ServiceException;
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -38,6 +41,7 @@ public class FooServiceV1 {
 
   @Autowired
   FooServerServiceV1Feign fooServerServiceV1Feign;
+  private static final String FOO_SERVER_SERVICE = "foo-server-service";
 
   /**
    *
@@ -45,6 +49,10 @@ public class FooServiceV1 {
    * @return
    * @throws ServiceException
    */
+  //@TimeLimiter(name = FOO_SERVER_SERVICE)
+  @CircuitBreaker(name = FOO_SERVER_SERVICE, fallbackMethod = "createFallbackMethod")
+  @Bulkhead(name = FOO_SERVER_SERVICE)
+  @Retry(name = FOO_SERVER_SERVICE)
   public ResponseEntity<Void> create(FooDTOV1 dto) throws ServiceException {
     //--
     try {
@@ -59,6 +67,19 @@ public class FooServiceV1 {
     //--
   }
 
+  /**
+   *
+   * @param dto
+   * @return
+   * @throws ServiceException
+   */
+  public ResponseEntity<Void> createFallbackMethod(FooDTOV1 dto, Throwable ex) throws ServiceException {
+    //--
+    log.debug("createFallbackMethod");
+    throw (ServiceException) ex;
+    //--
+  }
+
 
   /**
    *
@@ -66,6 +87,10 @@ public class FooServiceV1 {
    * @return
    * @throws ServiceException
    */
+  //@TimeLimiter(name = FOO_SERVER_SERVICE)
+  @CircuitBreaker(name = FOO_SERVER_SERVICE, fallbackMethod = "retrieveByIdFallbackMethod")
+  @Bulkhead(name = FOO_SERVER_SERVICE)
+  @Retry(name = FOO_SERVER_SERVICE)
   public ResponseEntity<FooDTOV1> retrieveById(Long id) throws ServiceException {
     //--
     try {
@@ -80,6 +105,19 @@ public class FooServiceV1 {
     //--
   }
 
+  /**
+   *
+   * @param id
+   * @param ex
+   * @return
+   * @throws ServiceException
+   */
+  public ResponseEntity<FooDTOV1> retrieveByIdFallbackMethod(Long id, Throwable ex) throws ServiceException {
+    //--
+    log.debug("retrieveByIdFallbackMethod");
+    throw (ServiceException) ex;
+    //--
+  }
 
   /**
    *

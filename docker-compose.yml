@@ -1,0 +1,85 @@
+version: '3'
+
+services:
+  foo-client-service:
+    build: ./foo-client-service
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_PROFILES_ACTIVE=local
+      - SPRING_CLOUD_CONSUL_HOST=consul-agent
+      - SPRING_CLOUD_CONSUL_PORT=8500
+      - SPRING_CLOUD_CONSUL_ENABLED=true
+      - SPRING_CLOUD_CONSUL_DISCOVERY_REGISTER=true
+      - SPRING_CLOUD_CONSUL_DISCOVERY_REGISTERHEALTHCHECK=true
+      - SPRING_CLOUD_CONSUL_DISCOVERY_HEALTHCHECKINTERVAL=15s
+      - SPRING_CLOUD_CONSUL_DISCOVERY_TAGS=tag1,tag2
+      - SPRING_CLOUD_CONFIG_ENABLED=false
+      - SPRING_CLOUD_CONFIG_DISCOVERY_ENABLED=false
+      - SPRING_CLOUD_CONFIG_DISCOVERY_SERVICEID=config-server
+    networks:
+      - "default"
+    ports:
+      - "8080:8080"
+
+  foo-server-service:
+    build: ./foo-server-service
+    environment:
+      - SERVER_PORT=9080
+      - SPRING_PROFILES_ACTIVE=local
+      - SPRING_CLOUD_CONSUL_HOST=consul-agent
+      - SPRING_CLOUD_CONSUL_PORT=8500
+      - SPRING_CLOUD_CONSUL_ENABLED=true
+      - SPRING_CLOUD_CONSUL_DISCOVERY_REGISTER=true
+      - SPRING_CLOUD_CONSUL_DISCOVERY_REGISTERHEALTHCHECK=true
+      - SPRING_CLOUD_CONSUL_DISCOVERY_HEALTHCHECKINTERVAL=15s
+      - SPRING_CLOUD_CONSUL_DISCOVERY_TAGS=tag1,tag2
+      - SPRING_CLOUD_CONFIG_ENABLED=false
+      - SPRING_CLOUD_CONFIG_DISCOVERY_ENABLED=false
+      - SPRING_CLOUD_CONFIG_DISCOVERY_SERVICEID=config-server
+    networks:
+      - "default"
+    ports:
+      - "9080:9080"
+
+  consul-agent:
+    image: consul:latest
+    container_name: "consul-agent"
+    hostname: "consul-agent"
+    environment:
+      - "CONSUL_LOCAL_CONFIG={\"disable_update_check\": true}"
+      - "CONSUL_BIND_INTERFACE=eth0"
+    networks:
+      - "default"
+    ports:
+      - "8301:8301"
+      - "8400:8400"
+      - "8500:8500"
+      - "8600:8600"
+      - "8600:8600/udp"
+    volumes:
+      - 'consul-agent-data:/consul/data'
+    command: "agent -server -bootstrap -ui -client=0.0.0.0 -bind='{{ GetInterfaceIP \"eth0\" }}'"
+
+  postgres:
+    container_name: postgres_container
+    image: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+      - ./postgres-schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - "default"
+    restart: unless-stopped
+
+networks:
+  default:
+volumes:
+  consul-agent-data:
+    driver: local
+  postgres:
+    driver: local
