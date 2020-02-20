@@ -1,5 +1,5 @@
 server.servlet.context-path: / # Context path of the application.
-server.port: ${SERVER_PORT:9080} # Server HTTP port.
+server.port: ${SERVER_PORT:1280} # Server HTTP port.
 
 ---
 spring:
@@ -16,7 +16,7 @@ spring:
         # Service name
         serviceName: ${spring.application.name}
         # Unique service instance id
-        instanceId: ${spring.application.name}
+        instanceId: ${spring.application.name}:${random.value}
         # Is service discovery enabled?
         enabled: ${SPRING_CLOUD_CONSUL_DISCOVERY_ENABLED:false}
         # Register as a service in consul.
@@ -61,13 +61,3 @@ spring:
       preferredNetworks:
         - 192.168
         - 10.0
-# -------------- #
-# METRICS        #
-# -------------- #
-metrics:
-  datadog:
-    enabled: true
-    statsdHost: localhost
-    statsdPort: 8125
-    statsdPrefix: foo-server-service
-    tags: environment:${spring.profiles.active}, service:${spring.application.name}
