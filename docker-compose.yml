@@ -16,8 +16,6 @@ services:
       - "8500:8500"
       - "8600:8600"
       - "8600:8600/udp"
-    volumes:
-      - 'consul-data:/consul/data'
     command: "agent -server -bootstrap -ui -client=0.0.0.0 -bind='{{ GetInterfaceIP \"eth0\" }}'"
 
   postgres:
@@ -53,6 +51,7 @@ services:
 
   foo-client-service:
     build: ./foo-client-service
+    container_name: "foo-client-service"
     environment:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=local
@@ -73,8 +72,9 @@ services:
     links:
       - consul
 
-  foo-server-service:
+  foo-server-service-1:
     build: ./foo-server-service
+    container_name: "foo-server-service-1"
     environment:
       - SERVER_PORT=9080
       - SPRING_PROFILES_ACTIVE=local
@@ -92,6 +92,30 @@ services:
       - "default"
     ports:
       - "9080:9080"
+    links:
+      - postgres
+      - consul
+
+  foo-server-service-2:
+    build: ./foo-server-service
+    container_name: "foo-server-service-2"
+    environment:
+      - SERVER_PORT=1080
+      - SPRING_PROFILES_ACTIVE=local
+      - SPRING_CLOUD_CONSUL_HOST=consul
+      - SPRING_CLOUD_CONSUL_PORT=8500
+      - SPRING_CLOUD_CONSUL_ENABLED=true
+      - SPRING_CLOUD_CONSUL_DISCOVERY_REGISTER=true
+      - SPRING_CLOUD_CONSUL_DISCOVERY_REGISTERHEALTHCHECK=true
+      - SPRING_CLOUD_CONSUL_DISCOVERY_HEALTHCHECKINTERVAL=15s
+      - SPRING_CLOUD_CONSUL_DISCOVERY_TAGS=tag1,tag2
+      - SPRING_CLOUD_CONFIG_ENABLED=false
+      - SPRING_CLOUD_CONFIG_DISCOVERY_ENABLED=false
+      - SPRING_CLOUD_CONFIG_DISCOVERY_SERVICEID=config-server
+    networks:
+      - "default"
+    ports:
+      - "1080:1080"
     links:
       - postgres
       - consul
