@@ -1,12 +1,62 @@
 version: '3'
 
 services:
+  consul:
+    image: consul:latest
+    container_name: "consul"
+    hostname: "consul"
+    environment:
+      - "CONSUL_LOCAL_CONFIG={\"disable_update_check\": true}"
+      - "CONSUL_BIND_INTERFACE=eth0"
+    networks:
+      - "default"
+    ports:
+      - "8301:8301"
+      - "8400:8400"
+      - "8500:8500"
+      - "8600:8600"
+      - "8600:8600/udp"
+    volumes:
+      - 'consul-data:/consul/data'
+    command: "agent -server -bootstrap -ui -client=0.0.0.0 -bind='{{ GetInterfaceIP \"eth0\" }}'"
+
+  postgres:
+    image: postgres:11.6
+    container_name: postgres
+    hostname: "postgres"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      PGDATA: /data/postgres
+    volumes:
+      - ./postgres-schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+    ports:
+      - "5432"
+    networks:
+      - "default"
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    hostname: "pgadmin"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+    volumes:
+      - pgadmin:/root/.pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - "default"
+    restart: unless-stopped
+
   foo-client-service:
     build: ./foo-client-service
     environment:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=local
-      - SPRING_CLOUD_CONSUL_HOST=consul-agent
+      - SPRING_CLOUD_CONSUL_HOST=consul
       - SPRING_CLOUD_CONSUL_PORT=8500
       - SPRING_CLOUD_CONSUL_ENABLED=true
       - SPRING_CLOUD_CONSUL_DISCOVERY_REGISTER=true
@@ -26,7 +76,7 @@ services:
     environment:
       - SERVER_PORT=9080
       - SPRING_PROFILES_ACTIVE=local
-      - SPRING_CLOUD_CONSUL_HOST=consul-agent
+      - SPRING_CLOUD_CONSUL_HOST=consul
       - SPRING_CLOUD_CONSUL_PORT=8500
       - SPRING_CLOUD_CONSUL_ENABLED=true
       - SPRING_CLOUD_CONSUL_DISCOVERY_REGISTER=true
@@ -41,45 +91,10 @@ services:
     ports:
       - "9080:9080"
 
-  consul-agent:
-    image: consul:latest
-    container_name: "consul-agent"
-    hostname: "consul-agent"
-    environment:
-      - "CONSUL_LOCAL_CONFIG={\"disable_update_check\": true}"
-      - "CONSUL_BIND_INTERFACE=eth0"
-    networks:
-      - "default"
-    ports:
-      - "8301:8301"
-      - "8400:8400"
-      - "8500:8500"
-      - "8600:8600"
-      - "8600:8600/udp"
-    volumes:
-      - 'consul-agent-data:/consul/data'
-    command: "agent -server -bootstrap -ui -client=0.0.0.0 -bind='{{ GetInterfaceIP \"eth0\" }}'"
-
-  postgres:
-    container_name: postgres_container
-    image: postgres
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      PGDATA: /data/postgres
-    volumes:
-      - postgres:/data/postgres
-      - ./postgres-schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
-    ports:
-      - "5432:5432"
-    networks:
-      - "default"
-    restart: unless-stopped
-
 networks:
   default:
+    driver: bridge
 volumes:
-  consul-agent-data:
-    driver: local
+  consul-data:
   postgres:
-    driver: local
+  pgadmin:
