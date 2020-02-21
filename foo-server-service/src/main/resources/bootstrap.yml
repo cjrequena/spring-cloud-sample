@@ -16,7 +16,8 @@ spring:
         # Service name
         serviceName: ${spring.application.name}
         # Unique service instance id
-        instanceId: ${spring.application.name}:${random.value}
+        #instanceId: ${spring.application.name}:${random.value}
+        instanceId: ${spring.application.name}:${server.port}
         # Is service discovery enabled?
         enabled: ${SPRING_CLOUD_CONSUL_DISCOVERY_ENABLED:false}
         # Register as a service in consul.

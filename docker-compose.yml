@@ -21,7 +21,7 @@ services:
     command: "agent -server -bootstrap -ui -client=0.0.0.0 -bind='{{ GetInterfaceIP \"eth0\" }}'"
 
   postgres:
-    image: postgres:11.6
+    image: postgres
     container_name: postgres
     hostname: "postgres"
     environment:
@@ -70,6 +70,8 @@ services:
       - "default"
     ports:
       - "8080:8080"
+    links:
+      - consul
 
   foo-server-service:
     build: ./foo-server-service
@@ -90,6 +92,9 @@ services:
       - "default"
     ports:
       - "9080:9080"
+    links:
+      - postgres
+      - consul
 
 networks:
   default:

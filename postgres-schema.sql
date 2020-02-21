@@ -1,28 +1,51 @@
--- Adminer 4.6.3 PostgreSQL dump
+-- Database: foo
 
-CREATE DATABASE foo;
+-- DROP DATABASE foo;
 
-CREATE SEQUENCE IF NOT EXISTS foo_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1;
-CREATE SEQUENCE IF NOT EXISTS boo_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1;
+CREATE DATABASE foo WITH  OWNER = postgres;
 
-CREATE TABLE IF NOT EXISTS foo (
-    "id" integer DEFAULT nextval('foo_id_seq') NOT NULL,
-    "name" text NOT NULL,
-    "description" text,
-    "creation_date" date DEFAULT CURRENT_DATE,
-    PRIMARY KEY ("id")
-) WITH (oids = false);
+\c foo
 
+CREATE SEQUENCE public.boo_id_seq;
 
-CREATE TABLE IF NOT EXISTS boo (
-    "id" integer DEFAULT nextval('boo_id_seq') NOT NULL,
-    "foo_id" integer,
-    "name" text NOT NULL,
-    "description" text,
-    "creation_date" date DEFAULT CURRENT_DATE,
-    PRIMARY KEY ("id"),
-    CONSTRAINT fk_foo_id FOREIGN KEY (foo_id) REFERENCES foo(id),
-    UNIQUE ("id", "foo_id")
-) WITH (oids = false);
+ALTER SEQUENCE public.boo_id_seq OWNER TO postgres;
 
--- 2018-10-28 09:39:07.518463+00
+CREATE SEQUENCE public.foo_id_seq;
+
+ALTER SEQUENCE public.foo_id_seq OWNER TO postgres;
+
+-- DROP TABLE public.foo;
+
+CREATE TABLE public.foo
+(
+    id integer NOT NULL DEFAULT nextval('foo_id_seq'::regclass),
+    name text COLLATE pg_catalog."default" NOT NULL,
+    description text COLLATE pg_catalog."default",
+    creation_date date DEFAULT CURRENT_DATE,
+    CONSTRAINT foo_pkey PRIMARY KEY (id)
+)
+WITH (OIDS = FALSE)
+TABLESPACE pg_default;
+
+ALTER TABLE public.foo OWNER to postgres;
+
+-- Table: public.boo
+
+-- DROP TABLE public.boo;
+
+CREATE TABLE public.boo
+(
+    id integer NOT NULL DEFAULT nextval('boo_id_seq'::regclass),
+    foo_id integer,
+    name text COLLATE pg_catalog."default" NOT NULL,
+    description text COLLATE pg_catalog."default",
+    creation_date date DEFAULT CURRENT_DATE,
+    CONSTRAINT boo_pkey PRIMARY KEY (id),
+    CONSTRAINT boo_id_foo_id_key UNIQUE (id, foo_id),
+    CONSTRAINT fk_foo_id FOREIGN KEY (foo_id)
+    REFERENCES public.foo (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (OIDS = FALSE)
+TABLESPACE pg_default;
+
+ALTER TABLE public.boo OWNER to postgres;
