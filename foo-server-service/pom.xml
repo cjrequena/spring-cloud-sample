@@ -16,7 +16,7 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>eu.jasPe</groupId>
+            <groupId>eu.jaspe</groupId>
             <artifactId>jaspe</artifactId>
             <version>${jaspe.version}</version>
         </dependency>

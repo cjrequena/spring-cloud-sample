@@ -27,7 +27,9 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       PGDATA: /data/postgres
     volumes:
+      - postgres:/data/postgres
       - ./postgres-schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ./postgres-data.sql:/docker-entrypoint-initdb.d/2-data.sql
     ports:
       - "5432"
     networks:
@@ -39,8 +41,8 @@ services:
     container_name: pgadmin
     hostname: "pgadmin"
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: admin
     volumes:
       - pgadmin:/root/.pgadmin
     ports:
