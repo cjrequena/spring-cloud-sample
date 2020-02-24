@@ -10,10 +10,10 @@
 
 # Getting Started
 
-Just run the Application.java each the server and clint instance in your IDE.
-Application is running on http://localhost:9080 for server side and on Application is running on http://localhost:8080 for client side
+Just run the Application.java on each the server and client instance in your IDE.
+Application is running on http://localhost:9080 for server side and on http://localhost:8080 for client side
 
-# Docker
+## Docker
 This sample project uses Docker and Docker Compose, The docker-compose file contains services for consul, postgres, pgadmin.
 Also, de spring cloud examples are containerized.
 
