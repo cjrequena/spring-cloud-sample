@@ -1,6 +1,6 @@
 # spring-cloud-sample
 
-[Spring Cloud Microservices After Netflix Era](https://medium.com/@Ankitthakur/spring-boot-with-kafka-integration-part-2-kafka-consumer-cf08f9c040e0)
+[Spring Cloud Microservices After Netflix Era](https://medium.com/javarevisited/the-future-of-spring-cloud-microservices-after-netflix-era-and-kubernetes-462219cc410a)
 
 ## Spring Cloud Config
 ## Spring Cloud Consul
