@@ -36,6 +36,8 @@ spring:
         healthCheckCriticalTimeout: ${SPRING_CLOUD_CONSUL_DISCOVERY_HEALTHCHECKCRITICALTIMEOUT:10m}
         # Tags to use when registering service
         tags: project_name=${spring.application.name}, maven_version=${project.version}, commit_id=${git.commit.id}, commit_time=${git.commit.time}, profiles_active=${spring.profiles.active}
+        # Hostname to use when accessing server.
+        hostname: ${SPRING_CLOUD_CONSUL_DISCOVERY_HOSTNAME:localhost}
         # Use ip address rather than hostname during registration
         prefer-ip-address: ${SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS:false}
         # IP address to use when accessing service (must also set preferIpAddress to use)
