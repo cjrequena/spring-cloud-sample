@@ -26,6 +26,8 @@ import javax.json.JsonMergePatch;
 import javax.json.JsonPatch;
 import java.util.List;
 
+import static com.sample.fooclientservice.common.Constant.VND_FOO_SERVICE_V1;
+
 /**
  * <p>
  * <p>
@@ -229,8 +231,8 @@ public class FooServiceV1 {
    *
    */
   //@FeignClient(url = "http://localhost:9080/foo-server-service")
-  @FeignClient(name = "foo-server-service")
-  @RequestMapping(value = "/foo-server-service")
+  @FeignClient(name = "foo-server-service", path = "/foo-server-service")
+  @RequestMapping(headers = {"Accept-Version=" + VND_FOO_SERVICE_V1})
   public interface FooServerServiceV1Feign {
 
     /**
@@ -242,8 +244,7 @@ public class FooServiceV1 {
     @PostMapping(value = "/fooes",
       produces = {
         MediaType.APPLICATION_JSON_VALUE
-      },
-      headers = "Accept-Version=vnd.foo-service.v1"
+      }
     )
     ResponseEntity<Void> create(@RequestBody FooDTOV1 dto) throws ServiceException;
 
@@ -257,8 +258,7 @@ public class FooServiceV1 {
       path = "/fooes/{id}",
       produces = {
         MediaType.APPLICATION_JSON_VALUE
-      },
-      headers = "Accept-Version=vnd.foo-service.v1"
+      }
     )
     ResponseEntity<FooDTOV1> retrieveById(@PathVariable(value = "id") Long id) throws ServiceException;
 
@@ -276,8 +276,7 @@ public class FooServiceV1 {
       path = "/fooes",
       produces = {
         MediaType.APPLICATION_JSON_VALUE
-      },
-      headers = "Accept-Version=vnd.foo-service.v1"
+      }
     )
     ResponseEntity<List<FooDTOV1>> retrieve(
       @RequestParam(value = "fields") String fields,
@@ -297,8 +296,7 @@ public class FooServiceV1 {
       path = "/fooes/{id}",
       produces = {
         MediaType.APPLICATION_JSON_VALUE
-      },
-      headers = "Accept-Version=vnd.foo-service.v1"
+      }
     )
     ResponseEntity<Void> update(
       @PathVariable(value = "id") Long id,
@@ -315,8 +313,7 @@ public class FooServiceV1 {
     @PatchMapping(
       path = "/fooes/{id}",
       produces = {MediaType.APPLICATION_JSON_VALUE},
-      consumes = {"application/json-patch+json"},
-      headers = "Accept-Version=vnd.foo-service.v1"
+      consumes = {"application/json-patch+json"}
     )
     ResponseEntity<Void> patch(@PathVariable(value = "id") Long id, @RequestBody JsonPatch patchDocument) throws ServiceException;
 
@@ -330,8 +327,7 @@ public class FooServiceV1 {
     @PatchMapping(
       path = "/fooes/{id}",
       produces = {MediaType.APPLICATION_JSON_VALUE},
-      consumes = {"application/merge-patch+json"},
-      headers = "Accept-Version=vnd.foo-service.v1"
+      consumes = {"application/merge-patch+json"}
     )
     ResponseEntity<Void> patch(@PathVariable(value = "id") Long id, @RequestBody JsonMergePatch mergePatchDocument) throws ServiceException;
 
@@ -345,8 +341,7 @@ public class FooServiceV1 {
       path = "/fooes/{id}",
       produces = {
         MediaType.APPLICATION_JSON_VALUE
-      },
-      headers = "Accept-Version=vnd.foo-service.v1"
+      }
     )
     ResponseEntity<Void> delete(@PathVariable(value = "id") Long id) throws ServiceException;
   }

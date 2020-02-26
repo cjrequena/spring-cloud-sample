@@ -9,7 +9,7 @@ services:
       - "CONSUL_LOCAL_CONFIG={\"disable_update_check\": true}"
       - "CONSUL_BIND_INTERFACE=eth0"
     networks:
-      - "default"
+      default:
     ports:
       - "8301:8301"
       - "8400:8400"
@@ -33,7 +33,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - "default"
+      default:
     restart: unless-stopped
 
   pgadmin:
@@ -48,12 +48,13 @@ services:
     ports:
       - "5050:80"
     networks:
-      - "default"
+      default:
     restart: unless-stopped
 
   foo-client-service:
     build: ./foo-client-service
     container_name: "foo-client-service"
+    hostname: "foo-client-service"
     environment:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=local
@@ -64,11 +65,13 @@ services:
       - SPRING_CLOUD_CONSUL_DISCOVERY_REGISTERHEALTHCHECK=true
       - SPRING_CLOUD_CONSUL_DISCOVERY_HEALTHCHECKINTERVAL=15s
       - SPRING_CLOUD_CONSUL_DISCOVERY_TAGS=tag1,tag2
+      - SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS=false
+      - SPRING_CLOUD_CONSUL_DISCOVERY_IPADDRESS=127.0.0.1
       - SPRING_CLOUD_CONFIG_ENABLED=false
       - SPRING_CLOUD_CONFIG_DISCOVERY_ENABLED=false
       - SPRING_CLOUD_CONFIG_DISCOVERY_SERVICEID=config-server
     networks:
-      - "default"
+      default:
     ports:
       - "8080:8080"
     links:
@@ -77,6 +80,7 @@ services:
   foo-server-service-1:
     build: ./foo-server-service
     container_name: "foo-server-service-1"
+    hostname: "foo-server-service-1"
     environment:
       - SERVER_PORT=9080
       - SPRING_PROFILES_ACTIVE=local
@@ -87,11 +91,13 @@ services:
       - SPRING_CLOUD_CONSUL_DISCOVERY_REGISTERHEALTHCHECK=true
       - SPRING_CLOUD_CONSUL_DISCOVERY_HEALTHCHECKINTERVAL=15s
       - SPRING_CLOUD_CONSUL_DISCOVERY_TAGS=tag1,tag2
+      - SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS=false
+      - SPRING_CLOUD_CONSUL_DISCOVERY_IPADDRESS=127.0.0.1
       - SPRING_CLOUD_CONFIG_ENABLED=false
       - SPRING_CLOUD_CONFIG_DISCOVERY_ENABLED=false
       - SPRING_CLOUD_CONFIG_DISCOVERY_SERVICEID=config-server
     networks:
-      - "default"
+      default:
     ports:
       - "9080:9080"
     links:
@@ -101,6 +107,7 @@ services:
   foo-server-service-2:
     build: ./foo-server-service
     container_name: "foo-server-service-2"
+    hostname: "foo-server-service-2"
     environment:
       - SERVER_PORT=1080
       - SPRING_PROFILES_ACTIVE=local
@@ -111,11 +118,13 @@ services:
       - SPRING_CLOUD_CONSUL_DISCOVERY_REGISTERHEALTHCHECK=true
       - SPRING_CLOUD_CONSUL_DISCOVERY_HEALTHCHECKINTERVAL=15s
       - SPRING_CLOUD_CONSUL_DISCOVERY_TAGS=tag1,tag2
+      - SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS=false
+      - SPRING_CLOUD_CONSUL_DISCOVERY_IPADDRESS=127.0.0.1
       - SPRING_CLOUD_CONFIG_ENABLED=false
       - SPRING_CLOUD_CONFIG_DISCOVERY_ENABLED=false
       - SPRING_CLOUD_CONFIG_DISCOVERY_SERVICEID=config-server
     networks:
-      - "default"
+      default:
     ports:
       - "1080:1080"
     links:
