@@ -1,5 +1,5 @@
-server.servlet.context-path: / # Context path of the application.
-server.port: ${SERVER_PORT:8080} # Server HTTP port.
+management.server.servlet.context-path: / # Context path of the application.
+management.server.port: ${SERVER_PORT:8080} # Server HTTP port.
 
 ---
 spring:
