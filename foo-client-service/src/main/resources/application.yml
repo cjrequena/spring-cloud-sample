@@ -3,12 +3,6 @@
 #-----------------------------------------------------------------------------------------------
 spring.main.allow-bean-definition-overriding: true
 
-#-----------------------------------------------------------------------------------------------
-# PROFILE LOCAL
-#-----------------------------------------------------------------------------------------------
-spring:
-  profiles: local
-
 # INFO
 info:
   service_name: ${spring.application.name}
@@ -25,6 +19,13 @@ info:
   git.commit.user.name: ${git.commit.user.name}
   git.commit.user.email: ${git.commit.user.email}
   git.remote.origin.url: ${git.remote.origin.url}
+
+---
+#-----------------------------------------------------------------------------------------------
+# PROFILE LOCAL
+#-----------------------------------------------------------------------------------------------
+spring:
+  profiles: local
 
 # ----------------------------------------
 # ACTUATOR PROPERTIES
@@ -148,3 +149,5 @@ resilience4j.timelimiter:
     foo-server-service:
       timeoutDuration: 2s
       cancelRunningFuture: true
+
+foo-server-service.url: localhost:9080

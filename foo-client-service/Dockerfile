@@ -1,4 +1,6 @@
-FROM openjdk:8u141-jre-slim
+FROM openjdk:8u252-jre-slim
+#FROM openjdk:11.0.7-jre-slim
+
 SHELL ["bash", "-c"]
 #
 ADD target/foo-client-service-exec.jar app.jar
