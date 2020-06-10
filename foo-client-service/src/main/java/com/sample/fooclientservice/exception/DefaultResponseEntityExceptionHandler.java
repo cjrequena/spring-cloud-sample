@@ -22,7 +22,7 @@ import java.time.format.DateTimeFormatter;
  */
 @ControllerAdvice
 @Log4j2
-public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
+public class DefaultResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
   public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
 

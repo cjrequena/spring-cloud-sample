@@ -30,7 +30,7 @@ import static com.sample.fooclientservice.common.Constant.VND_FOO_SERVICE_V1;
  * @author cjrequena
  * @version 1.0
  */
-@FeignClient(name = "foo-server-service", url = "${foo-server-service.url}")
+@FeignClient(name = "foo-server-service", url = "${foo-server-service.url}", contextId = "foo-server-service")
 @RequestMapping(value = "/foo-server-service", headers = {"Accept-Version=" + VND_FOO_SERVICE_V1})
 public interface FooServerServiceV1Feign {
 
