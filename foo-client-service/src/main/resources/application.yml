@@ -78,7 +78,7 @@ feign:
         connectTimeout: 5000
         readTimeout: 5000
         loggerLevel: basic
-        errorDecoder: com.sample.fooclientservice.exception.DefaultFeignErrorDecoder
+        errorDecoder: com.cjrequena.sample.fooclientservice.exception.DefaultFeignErrorDecoder
 
 # resilience4j circuit breaker configuration [https://resilience4j.readme.io/docs/circuitbreaker]
 resilience4j.circuitbreaker:
