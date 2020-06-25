@@ -48,6 +48,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  * @author cjrequena
  * @version 1.0
  */
+@SuppressWarnings("unchecked")
 @Log4j2
 @RestController
 @RequestMapping(value = "/foo-client-service", headers = {"Accept-Version=" + Constant.VND_FOO_SERVICE_V1})

@@ -20,6 +20,7 @@ import java.time.format.DateTimeFormatter;
  * @author cjrequena
  * @since JDK1.8
  */
+@SuppressWarnings("unchecked")
 @ControllerAdvice
 @Log4j2
 public class DefaultResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {

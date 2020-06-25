@@ -6,6 +6,7 @@ import com.cjrequena.sample.fooserverservice.service.BooServiceV1;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import org.springframework.stereotype.Component;
 
+@SuppressWarnings("unchecked")
 @Component
 public class BooQuery implements GraphQLQueryResolver {
 

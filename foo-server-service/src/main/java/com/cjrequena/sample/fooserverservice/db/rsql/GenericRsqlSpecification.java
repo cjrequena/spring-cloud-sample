@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
  *
  */
 @AllArgsConstructor
+@SuppressWarnings("unchecked")
 public class GenericRsqlSpecification<T> implements Specification<T> {
   public static final String ENUM = "enum";
   private String property;
