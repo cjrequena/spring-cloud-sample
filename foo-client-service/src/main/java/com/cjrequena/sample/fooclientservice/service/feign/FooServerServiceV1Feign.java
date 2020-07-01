@@ -82,7 +82,7 @@ public interface FooServerServiceV1Feign {
     @RequestParam(value = "filters") String filters,
     @RequestParam(value = "sort") String sort,
     @RequestParam(value = "offset") Integer offset,
-    @RequestParam(value = "limit") Integer limit) throws ServiceException;
+    @RequestParam(value = "limit") Integer limit) ;
 
   /**
    *

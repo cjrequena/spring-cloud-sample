@@ -355,7 +355,7 @@ public class FooControllerV1 {
     UriComponentsBuilder ucBuilder) throws ServiceException {
     //--
     try {
-      this.fooServiceV1.patch(id, mergePatchDocument);
+      this.fooServiceV1.merge(id, mergePatchDocument);
       //Headers
       HttpHeaders responseHeaders = new HttpHeaders();
       responseHeaders.setLocation(ucBuilder.path("/fooes/{id}").buildAndExpand(id).toUri());

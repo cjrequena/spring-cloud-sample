@@ -34,3 +34,10 @@ Check the services
 - Open http://localhost:8080/swagger-ui.html - Client side microservice
 - Open http://localhost:9080/swagger-ui.html - Service side microservice, instance 1
 - Open http://localhost:1080/swagger-ui.html - Service side microservice, instance 2
+
+# Resources
+[resilience4j](https://resilience4j.readme.io/docs)
+[resilience4j github](https://github.com/resilience4j/resilience4j)
+[Getting started with resilience4j-spring-boot2](https://resilience4j.readme.io/docs/getting-started-3)
+[Getting started with resilience4j-spring-cloud2](https://resilience4j.readme.io/docs/getting-started-6)
+[Spring Cloud Circuit Breaker](https://cloud.spring.io/spring-cloud-static/spring-cloud-circuitbreaker/current/reference/html/)

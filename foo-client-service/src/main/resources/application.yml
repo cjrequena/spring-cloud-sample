@@ -42,12 +42,16 @@ management.endpoint.health.enabled: true # Whether to enable the health endpoint
 management.endpoint.health.roles:  # Roles used to determine whether or not a user is authorized to be shown details. When empty, all authenticated users are authorized.
 management.endpoint.health.show-details: always # When to show full health details.
 
+management.health.circuitbreakers.enabled: true
+management.health.ratelimiters.enabled: true
+
 # INFO CONTRIBUTORS (InfoContributorProperties)
 management.info.build.enabled: true # Whether to enable build info.
 management.info.defaults.enabled: true # Whether to enable default info contributors.
 management.info.env.enabled: true # Whether to enable environment info.
 management.info.git.enabled: true # Whether to enable git info.
 management.info.git.mode: full # Mode to use to expose git information.
+
 
 # LOGGING
 logging.config: classpath:log4j2-local.xml # Location of the logging configuration file. For instance, `classpath:logback.xml` for Logback.
@@ -80,25 +84,29 @@ feign:
         loggerLevel: basic
         errorDecoder: com.cjrequena.sample.fooclientservice.exception.DefaultFeignErrorDecoder
 
+spring.cloud.circuitbreaker.resilience4j.enabled: true
 # resilience4j circuit breaker configuration [https://resilience4j.readme.io/docs/circuitbreaker]
 resilience4j.circuitbreaker:
   configs:
     default:
       registerHealthIndicator: true
-      slidingWindowSize: 10
-      minimumNumberOfCalls: 5
-      permittedNumberOfCallsInHalfOpenState: 3
-      automaticTransitionFromOpenToHalfOpenEnabled: true
-      waitDurationInOpenState: 5s
-      eventConsumerBufferSize: 10
+      failureRateThreshold: 50
+      slowCallRateThreshold: 100
+      slowCallDurationThreshold: 60000ms
+      permittedNumberOfCallsInHalfOpenState: 10
+      maxWaitDurationInHalfOpenState: 0
+      slidingWindowType: "COUNT_BASED"
+      slidingWindowSize: 100
+      minimumNumberOfCalls: 100
+      waitDurationInOpenState: 6000ms
+      automaticTransitionFromOpenToHalfOpenEnabled: false
       recordExceptions:
-        - org.springframework.web.client.HttpServerErrorException
-        - java.util.concurrent.TimeoutException
-        - java.io.IOException
+      ignoreExceptions:
+    test:
+      failureRateThreshold: 99
   instances:
-    foo-server-service:
-      baseConfig: default
-
+    foo-service:
+      baseConfig: test
 # resilience4j retry configuration [https://resilience4j.readme.io/docs/retry]
 resilience4j.retry:
   configs:
@@ -110,16 +118,14 @@ resilience4j.retry:
         - java.util.concurrent.TimeoutException
         - java.io.IOException
   instances:
-    foo-server-service:
+    foo-service:
       baseConfig: default
-
 # resilience4j bulkhead configuration
 resilience4j.bulkhead:
   instances:
-    foo-server-service:
+    foo-service:
       maxWaitDuration: 10ms
       maxConcurrentCalls: 10
-
 # resilience4j thread-pool-bulkhead configuration [https://resilience4j.readme.io/docs/bulkhead]
 resilience4j.thread-pool-bulkhead:
   configs:
@@ -128,26 +134,24 @@ resilience4j.thread-pool-bulkhead:
       coreThreadPoolSize: 2
       queueCapacity: 2
   instances:
-    foo-server-service:
+    foo-service:
       baseConfig: default
-
 # resilience4j ratelimiter configuration [https://resilience4j.readme.io/docs/ratelimiter]
 resilience4j.ratelimiter:
   configs:
     default:
+      registerHealthIndicator: true
       limitForPeriod: 10
       limitRefreshPeriod: 1s
       timeoutDuration: 0
-      registerHealthIndicator: true
       eventConsumerBufferSize: 100
   instances:
-    foo-server-service:
+    foo-service:
       baseConfig: default
-
 # resilience4j timelimiter configuration [https://resilience4j.readme.io/docs/timeout]
 resilience4j.timelimiter:
   instances:
-    foo-server-service:
+    foo-service:
       timeoutDuration: 2s
       cancelRunningFuture: true
 
