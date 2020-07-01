@@ -6,6 +6,8 @@ import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
 import io.github.resilience4j.retry.RetryRegistry;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.cloud.circuitbreaker.resilience4j.ReactiveResilience4JCircuitBreakerFactory;
+import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,6 +23,19 @@ import java.util.Map;
 @Configuration
 public class CircuitBreakerConfiguration {
 
+  @Bean
+  public Resilience4JCircuitBreakerFactory resilience4JCircuitBreakerFactory(CircuitBreakerRegistry circuitBreakerRegistry) {
+    Resilience4JCircuitBreakerFactory resilience4JCircuitBreakerFactory = new Resilience4JCircuitBreakerFactory();
+    resilience4JCircuitBreakerFactory.configureCircuitBreakerRegistry(circuitBreakerRegistry);
+    return resilience4JCircuitBreakerFactory;
+  }
+
+  @Bean
+  public ReactiveResilience4JCircuitBreakerFactory reactiveResilience4JCircuitBreakerFactory(CircuitBreakerRegistry circuitBreakerRegistry) {
+    ReactiveResilience4JCircuitBreakerFactory reactiveResilience4JCircuitBreakerFactory = new ReactiveResilience4JCircuitBreakerFactory();
+    reactiveResilience4JCircuitBreakerFactory.configureCircuitBreakerRegistry(circuitBreakerRegistry);
+    return reactiveResilience4JCircuitBreakerFactory;
+  }
   @Bean
   public Map<String, Number>  checkCircuitBreakerConfiguration() {
 
