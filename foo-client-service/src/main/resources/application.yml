@@ -155,4 +155,4 @@ resilience4j.timelimiter:
       timeoutDuration: 2s
       cancelRunningFuture: true
 
-foo-server-service.url: localhost:9080
+foo-server-service.url: #localhost:9080
