@@ -1,5 +1,5 @@
-FROM openjdk:8u252-jre-slim
-#FROM openjdk:11.0.7-jre-slim
+#FROM openjdk:8u252-jre-slim
+FROM openjdk:11.0.7-jre-slim
 
 SHELL ["bash", "-c"]
 #
