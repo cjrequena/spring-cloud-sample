@@ -74,8 +74,18 @@ public class FooControllerV1 {
   @Operation(
     summary = "Create a new foo.",
     description = "Create a new foo.",
-    parameters = {@Parameter(name= "accept-version", required = true, in = ParameterIn.HEADER,schema=@Schema(name = "accept-version", type = "string",implementation = String.class, allowableValues = {
-      VND_FOO_SERVICE_V1}))},
+    parameters = {
+      @Parameter(
+        name= "accept-version",
+        required = true, in =
+        ParameterIn.HEADER,
+        schema=@Schema(
+          name = "accept-version",
+          type = "string",
+          allowableValues = {VND_FOO_SERVICE_V1}
+        )
+      )
+    },
     requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = FooDTOV1.class)))
   )
   @ApiResponses(
@@ -129,8 +139,18 @@ public class FooControllerV1 {
   @Operation(
     summary = "Get a foo by id.",
     description = "Get a foo by id.",
-    parameters = {@Parameter(name= "accept-version", required = true, in = ParameterIn.HEADER,schema=@Schema(name = "accept-version", type = "string", allowableValues = {
-      VND_FOO_SERVICE_V1}))}
+    parameters = {
+      @Parameter(
+        name = "accept-version",
+        required = true, in =
+        ParameterIn.HEADER,
+        schema = @Schema(
+          name = "accept-version",
+          type = "string",
+          allowableValues = {VND_FOO_SERVICE_V1}
+        )
+      )
+    }
   )
   @ApiResponses(
     value = {
@@ -175,8 +195,18 @@ public class FooControllerV1 {
   @Operation(
     summary = "Get a list of fooes.",
     description = "Get a list of fooes.",
-    parameters = {@Parameter(name= "accept-version", required = true, in = ParameterIn.HEADER,schema=@Schema(name = "accept-version", type = "string", allowableValues = {
-      VND_FOO_SERVICE_V1}))}
+    parameters = {
+      @Parameter(
+        name = "accept-version",
+        required = true, in =
+        ParameterIn.HEADER,
+        schema = @Schema(
+          name = "accept-version",
+          type = "string",
+          allowableValues = {VND_FOO_SERVICE_V1}
+        )
+      )
+    }
   )
   @ApiResponses(
     value = {
@@ -237,8 +267,18 @@ public class FooControllerV1 {
   @Operation(
     summary = "Update a foo by id.",
     description = "Update a foo by id.",
-    parameters = {@Parameter(name= "accept-version", required = true, in = ParameterIn.HEADER,schema=@Schema(name = "accept-version", type = "string", allowableValues = {
-      VND_FOO_SERVICE_V1}))},
+    parameters = {
+      @Parameter(
+        name= "accept-version",
+        required = true, in =
+        ParameterIn.HEADER,
+        schema=@Schema(
+          name = "accept-version",
+          type = "string",
+          allowableValues = {VND_FOO_SERVICE_V1}
+        )
+      )
+    },
     requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = FooDTOV1.class)))
   )
   @ApiResponses(
@@ -288,8 +328,18 @@ public class FooControllerV1 {
   @Operation(
     summary = "Patch a foo by id.",
     description = "Patch a foo by id.",
-    parameters = {@Parameter(name= "accept-version", required = true, in = ParameterIn.HEADER,schema=@Schema(name = "accept-version", type = "string", allowableValues = {
-      VND_FOO_SERVICE_V1}))},
+    parameters = {
+      @Parameter(
+        name= "accept-version",
+        required = true, in =
+        ParameterIn.HEADER,
+        schema=@Schema(
+          name = "accept-version",
+          type = "string",
+          allowableValues = {VND_FOO_SERVICE_V1}
+        )
+      )
+    },
     requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(mediaType = APPLICATION_JSON_PATCH_VALUE, schema = @Schema(implementation = JsonPatch.class)))
   )
   @ApiResponses(
@@ -331,7 +381,7 @@ public class FooControllerV1 {
   }
 
   /**
-   * Patch a foo by id.
+   * Merge a foo by id.
    *
    * @param id {@link Integer}
    * @param mergePatchDocument {@link JsonMergePatch}
@@ -388,8 +438,18 @@ public class FooControllerV1 {
   @Operation(
     summary = "Delete a foo by id.",
     description = "Delete a foo by id.",
-    parameters = {@Parameter(name= "accept-version", required = true, in = ParameterIn.HEADER,schema=@Schema(name = "accept-version", type = "string", allowableValues = {
-      VND_FOO_SERVICE_V1}))}
+    parameters = {
+      @Parameter(
+        name= "accept-version",
+        required = true, in =
+        ParameterIn.HEADER,
+        schema=@Schema(
+          name = "accept-version",
+          type = "string",
+          allowableValues = {VND_FOO_SERVICE_V1}
+        )
+      )
+    }
   )
   @ApiResponses(
     value = {
