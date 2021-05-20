@@ -45,10 +45,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-webflux</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -154,10 +154,6 @@
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>org.flywaydb</groupId>-->
-        <!--            <artifactId>flyway-core</artifactId>-->
-        <!--        </dependency>-->
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
@@ -188,27 +184,11 @@
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>${springdoc-openapi-ui.version}</version>
         </dependency>
-        <!-- jackson -->
-        <dependency>
-            <groupId>org.msgpack</groupId>
-            <artifactId>jackson-dataformat-msgpack</artifactId>
-            <version>${jackson-dataformat-msgpack.version}</version>
-        </dependency>
+        <!-- -->
         <dependency>
             <groupId>com.netflix.feign</groupId>
             <artifactId>feign-jackson</artifactId>
             <version>${feign-jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.zalando</groupId>
-            <artifactId>jackson-datatype-money</artifactId>
-            <version>${jackson-datatype-money.version}</version>
-        </dependency>
-        <!--https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr353 -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr353</artifactId>
-            <version>2.10.0</version> <!--TODO-->
         </dependency>
         <!-- JSR-374 (JSON Processing) API: Patch Operation Support-->
         <!--https://mvnrepository.com/artifact/javax.json/javax.json-api-->

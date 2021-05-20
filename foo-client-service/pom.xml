@@ -40,10 +40,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-webflux</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -67,7 +67,6 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
-
         <!-- Spring Cloud -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -139,7 +138,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <!-- resilience4j -->
         <dependency>
             <groupId>io.github.resilience4j</groupId>
@@ -175,25 +173,9 @@
         </dependency>
         <!-- jackson -->
         <dependency>
-            <groupId>org.msgpack</groupId>
-            <artifactId>jackson-dataformat-msgpack</artifactId>
-            <version>${jackson-dataformat-msgpack.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.netflix.feign</groupId>
             <artifactId>feign-jackson</artifactId>
             <version>${feign-jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.zalando</groupId>
-            <artifactId>jackson-datatype-money</artifactId>
-            <version>${jackson-datatype-money.version}</version>
-        </dependency>
-        <!--https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr353 -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr353</artifactId>
-            <version>2.10.0</version> <!--TODO-->
         </dependency>
         <!-- JSR-374 (JSON Processing) API: Patch Operation Support-->
         <!--https://mvnrepository.com/artifact/javax.json/javax.json-api-->
