@@ -13,10 +13,9 @@ package com.cjrequena.sample.fooclientservice.exception;
  */
 public enum EErrorMessage {
 
-  DATABASE_CONFLICT_EXCEPTION("The database entity already exists"),
-  DATABASE_NOT_FOUND_EXCEPTION("The database entity was not found"),
-  DATABASE_BAD_REQUEST_EXCEPTION("The database query is malformed"),
-  DATABASE_CONSTRAINT_VIOLATION_EXCEPTION("Database constraint violation");
+  FEIGN_CONFLICT_EXCEPTION("Entity already exists"),
+  FEIGN_NOT_FOUND_EXCEPTION("Entity was not found"),
+  FEIGN_BAD_REQUEST_EXCEPTION("Query is malformed");
 
   private String message;
 

@@ -5,7 +5,7 @@ import org.springframework.lang.Nullable;
 
 public class FeignNotFoundServiceException extends ServiceException {
   public FeignNotFoundServiceException() {
-    super(EErrorMessage.DATABASE_NOT_FOUND_EXCEPTION.getMessage());
+    super(EErrorMessage.FEIGN_NOT_FOUND_EXCEPTION.getMessage());
   }
 
   public FeignNotFoundServiceException(String message) {

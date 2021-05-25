@@ -5,7 +5,7 @@ import org.springframework.lang.Nullable;
 
 public class FeignBadRequestServiceException extends ServiceException {
   public FeignBadRequestServiceException() {
-    super(EErrorMessage.DATABASE_BAD_REQUEST_EXCEPTION.getMessage());
+    super(EErrorMessage.FEIGN_BAD_REQUEST_EXCEPTION.getMessage());
   }
 
   public FeignBadRequestServiceException(String message) {

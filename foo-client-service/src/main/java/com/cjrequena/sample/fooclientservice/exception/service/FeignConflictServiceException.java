@@ -5,7 +5,7 @@ import org.springframework.lang.Nullable;
 
 public class FeignConflictServiceException extends ServiceException {
   public FeignConflictServiceException() {
-    super(EErrorMessage.DATABASE_CONFLICT_EXCEPTION.getMessage());
+    super(EErrorMessage.FEIGN_CONFLICT_EXCEPTION.getMessage());
   }
 
   public FeignConflictServiceException(String message) {

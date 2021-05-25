@@ -50,12 +50,6 @@ public class FooServiceV1 {
     return fooServerServiceV1Feign.create(dto);
   }
 
-  /**
-   *
-   * @param dto
-   * @return
-   * @throws ServiceException
-   */
   public ResponseEntity<Void> createFallbackMethod(FooDTOV1 dto, Throwable ex) throws FeignConflictServiceException, FeignBadRequestServiceException {
     //--
     log.debug("createFallbackMethod");
@@ -67,12 +61,6 @@ public class FooServiceV1 {
     //--
   }
 
-  /**
-   *
-   * @param id
-   * @return
-   * @throws ServiceException
-   */
   //@TimeLimiter(name = FOO_SERVICE)
   @CircuitBreaker(name = FOO_SERVICE, fallbackMethod = "retrieveByIdFallbackMethod")
   @Bulkhead(name = FOO_SERVICE)
@@ -83,13 +71,6 @@ public class FooServiceV1 {
     //--
   }
 
-  /**
-   *
-   * @param id
-   * @param ex
-   * @return
-   * @throws ServiceException
-   */
   public ResponseEntity<FooDTOV1> retrieveByIdFallbackMethod(Long id, Throwable ex) throws FeignNotFoundServiceException {
     //--
     log.debug("retrieveByIdFallbackMethod");
@@ -97,16 +78,6 @@ public class FooServiceV1 {
     //--
   }
 
-  /**
-   *
-   * @param fields
-   * @param filters
-   * @param sort
-   * @param offset
-   * @param limit
-   * @return
-   * @throws ServiceException
-   */
   @CircuitBreaker(name = FOO_SERVICE, fallbackMethod = "retrieveFallbackMethod")
   @Bulkhead(name = FOO_SERVICE)
   @Retry(name = FOO_SERVICE)
@@ -116,17 +87,6 @@ public class FooServiceV1 {
     //--
   }
 
-  /**
-   *
-   * @param fields
-   * @param filters
-   * @param sort
-   * @param offset
-   * @param limit
-   * @param ex
-   * @return
-   * @throws ServiceException
-   */
   public ResponseEntity<List<FooDTOV1>> retrieveFallbackMethod(String fields, String filters, String sort, Integer offset, Integer limit, Throwable ex)
     throws FeignBadRequestServiceException {
     //--
@@ -135,13 +95,6 @@ public class FooServiceV1 {
     //--
   }
 
-  /**
-   *
-   * @param id
-   * @param dto
-   * @return
-   * @throws ServiceException
-   */
   @CircuitBreaker(name = FOO_SERVICE, fallbackMethod = "updateFallbackMethod")
   @Bulkhead(name = FOO_SERVICE)
   @Retry(name = FOO_SERVICE)
@@ -151,14 +104,6 @@ public class FooServiceV1 {
     //--
   }
 
-  /**
-   *
-   * @param id
-   * @param dto
-   * @param ex
-   * @return
-   * @throws ServiceException
-   */
   public ResponseEntity<Void> updateFallbackMethod(Long id, FooDTOV1 dto, Throwable ex) throws FeignNotFoundServiceException {
     //--
     log.debug("updateFallbackMethod");
@@ -166,13 +111,6 @@ public class FooServiceV1 {
     //--
   }
 
-  /**
-   *
-   * @param id
-   * @param patchDocument
-   * @return
-   * @throws ServiceException
-   */
   @CircuitBreaker(name = FOO_SERVICE, fallbackMethod = "patchFallbackMethod")
   @Bulkhead(name = FOO_SERVICE)
   @Retry(name = FOO_SERVICE)
@@ -182,14 +120,6 @@ public class FooServiceV1 {
     //--
   }
 
-  /**
-   *
-   * @param id
-   * @param patchDocument
-   * @param ex
-   * @return
-   * @throws ServiceException
-   */
   public ResponseEntity<Void> patchFallbackMethod(Long id, JsonPatch patchDocument, Throwable ex) throws FeignNotFoundServiceException {
     //--
     log.debug("patchFallbackMethod");
@@ -197,13 +127,6 @@ public class FooServiceV1 {
     //--
   }
 
-  /**
-   *
-   * @param id
-   * @param mergePatchDocument
-   * @return
-   * @throws ServiceException
-   */
   @CircuitBreaker(name = FOO_SERVICE, fallbackMethod = "mergeFallbackMethod")
   @Bulkhead(name = FOO_SERVICE)
   @Retry(name = FOO_SERVICE)
@@ -218,12 +141,6 @@ public class FooServiceV1 {
     //--
   }
 
-  /**
-   *
-   * @param id
-   * @return
-   * @throws ServiceException
-   */
   @CircuitBreaker(name = FOO_SERVICE, fallbackMethod = "deleteFallbackMethod")
   @Bulkhead(name = FOO_SERVICE)
   @Retry(name = FOO_SERVICE)
@@ -231,13 +148,6 @@ public class FooServiceV1 {
     return fooServerServiceV1Feign.delete(id);
   }
 
-  /**
-   *
-   * @param id
-   * @param ex
-   * @return
-   * @throws ServiceException
-   */
   public ResponseEntity<Void> deleteFallbackMethod(Long id, Throwable ex) throws FeignNotFoundServiceException {
     //--
     log.debug("deleteFallbackMethod");
