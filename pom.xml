@@ -30,8 +30,6 @@
         <springdoc-openapi-ui.version>1.4.4</springdoc-openapi-ui.version>
         <!--https://mvnrepository.com/artifact/org.mapstruct/mapstruct-jdk8-->
         <mapstruct.version>1.3.1.Final</mapstruct.version>
-        <!--https://mvnrepository.com/artifact/com.netflix.feign/feign-jackson-->
-        <feign-jackson.version>8.18.0</feign-jackson.version>
         <!--https://mvnrepository.com/artifact/com.jcabi/jcabi-manifests-->
         <jcabi-manifests.version>1.1</jcabi-manifests.version>
         <!--https://mvnrepository.com/artifact/org.scala-lang/scala-library-->

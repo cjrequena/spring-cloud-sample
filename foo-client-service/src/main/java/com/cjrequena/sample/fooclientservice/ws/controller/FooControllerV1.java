@@ -2,8 +2,12 @@ package com.cjrequena.sample.fooclientservice.ws.controller;
 
 import com.cjrequena.sample.fooclientservice.common.Constant;
 import com.cjrequena.sample.fooclientservice.dto.FooDTOV1;
-import com.cjrequena.sample.fooclientservice.exception.EErrorCode;
-import com.cjrequena.sample.fooclientservice.exception.ServiceException;
+import com.cjrequena.sample.fooclientservice.exception.service.FeignBadRequestServiceException;
+import com.cjrequena.sample.fooclientservice.exception.service.FeignConflictServiceException;
+import com.cjrequena.sample.fooclientservice.exception.service.FeignNotFoundServiceException;
+import com.cjrequena.sample.fooclientservice.exception.web.BadRequestWebException;
+import com.cjrequena.sample.fooclientservice.exception.web.ConflictWebException;
+import com.cjrequena.sample.fooclientservice.exception.web.NotFoundWebException;
 import com.cjrequena.sample.fooclientservice.service.FooServiceV1;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -62,30 +66,22 @@ public class FooControllerV1 {
   @Autowired
   private FooServiceV1 fooServiceV1;
 
-  /**
-   * Create a new foo.
-   *
-   * @param dto {@link FooDTOV1}
-   * @param bindingResult {@link BindingResult}
-   * @return ResponseEntity {@link ResponseEntity}
-   * @throws ServiceException {@link ServiceException}
-   */
   @Operation(
     summary = "Create a new foo.",
     description = "Create a new foo.",
     parameters = {
       @Parameter(
-        name= "accept-version",
+        name = "accept-version",
         required = true,
         in = ParameterIn.HEADER,
-        schema=@Schema(
+        schema = @Schema(
           name = "accept-version",
           type = "string",
           allowableValues = {Constant.VND_FOO_SERVICE_V1}
         )
       )
     },
-    requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = FooDTOV1.class)))
+    requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = FooDTOV1.class)))
   )
   @ApiResponses(
     value = {
@@ -106,35 +102,27 @@ public class FooControllerV1 {
   )
   public ResponseEntity<Void> create(
     @Valid @RequestBody FooDTOV1 dto, BindingResult bindingResult,
-    HttpServletRequest request, UriComponentsBuilder ucBuilder) throws ServiceException {
+    HttpServletRequest request, UriComponentsBuilder ucBuilder) throws ConflictWebException, BadRequestWebException {
     //--
     try {
       return fooServiceV1.create(dto);
-    } catch (ServiceException ex) {
-      log.error("{}", ex.getMessage(), ex);
-      throw ex;
-    } catch (Exception ex) {
-      log.error("{}", ex.getMessage(), ex);
-      throw new ServiceException(EErrorCode.INTERNAL_SERVER_ERROR.getErrorCode(), ex);
+    } catch (FeignConflictServiceException ex) {
+      throw new ConflictWebException(ex.getMessage());
+    } catch (FeignBadRequestServiceException ex) {
+      throw new BadRequestWebException(ex.getMessage());
     }
     //---
   }
 
-  /**
-   * Get a foo by id.
-   *
-   * @param id {@link Integer}
-   * @return ResponseEntity {@link ResponseEntity}
-   */
   @Operation(
     summary = "Get a foo by id.",
     description = "Get a foo by id.",
     parameters = {
       @Parameter(
-        name= "accept-version",
+        name = "accept-version",
         required = true,
         in = ParameterIn.HEADER,
-        schema=@Schema(
+        schema = @Schema(
           name = "accept-version",
           type = "string", allowableValues = {Constant.VND_FOO_SERVICE_V1}
         )
@@ -158,38 +146,27 @@ public class FooControllerV1 {
     produces = {APPLICATION_JSON_VALUE}
   )
   public ResponseEntity<FooDTOV1> retrieveById(
-    @PathVariable(value = "id") Long id) throws ServiceException {
+    @PathVariable(value = "id") Long id) throws NotFoundWebException {
     //--
     try {
       //Headers
       HttpHeaders responseHeaders = new HttpHeaders();
       responseHeaders.set(CACHE_CONTROL, "no store, private, max-age=0");
       return this.fooServiceV1.retrieveById(id);
-    } catch (ServiceException ex) {
-      log.error("{}: {}", ex.getErrorCode(), ex.getMessage(), ex);
-      throw ex;
+    } catch (FeignNotFoundServiceException ex) {
+      throw new NotFoundWebException(ex.getMessage());
     }
     //---
   }
 
-  /**
-   *
-   * @param fields
-   * @param filters
-   * @param sort
-   * @param offset
-   * @param limit
-   * @return
-   * @throws ServiceException
-   */
   @Operation(
     summary = "Get a list of fooes.",
     description = "Get a list of fooes.",
     parameters = {
-      @Parameter(name= "accept-version",
+      @Parameter(name = "accept-version",
         required = true,
         in = ParameterIn.HEADER,
-        schema=@Schema(
+        schema = @Schema(
           name = "accept-version",
           type = "string",
           allowableValues = {Constant.VND_FOO_SERVICE_V1}
@@ -219,52 +196,36 @@ public class FooControllerV1 {
     @RequestParam(value = "sort", required = false) String sort,
     @RequestParam(value = "offset", required = false) Integer offset,
     @RequestParam(value = "limit", required = false) Integer limit
-  ) throws ServiceException {
+  ) throws BadRequestWebException {
     //--
     try {
-
       log.debug("fields: {} ", fields);
       log.debug("filters: {} ", filters);
       log.debug("sort: {} ", sort);
       log.debug("offset: {} ", offset);
       log.debug("limit: {} ", limit);
-
       return this.fooServiceV1.retrieve(fields, filters, sort, offset, limit);
-
-    } catch (ServiceException ex) {
-      log.error("{}", ex.getMessage(), ex);
-      throw ex;
-    } catch (Exception ex) {
-      log.error("{}", ex.getMessage(), ex);
-      throw new ServiceException(EErrorCode.INTERNAL_SERVER_ERROR.getErrorCode(), ex);
+    } catch (FeignBadRequestServiceException ex) {
+      throw new BadRequestWebException(ex.getMessage());
     }
     //--
   }
 
-  /**
-   * Update a foo by id.
-   *
-   * @param id {@link Integer}
-   * @param dto {@link FooDTOV1}
-   * @param bindingResult {@link BindingResult}
-   * @return Void {@link Void}
-   * @throws ServiceException {@link ServiceException}
-   */
   @Operation(
     summary = "Update a foo by id.",
     description = "Update a foo by id.",
     parameters = {
       @Parameter(
-        name= "accept-version",
+        name = "accept-version",
         required = true, in = ParameterIn.HEADER,
-        schema=@Schema(
+        schema = @Schema(
           name = "accept-version",
           type = "string",
           allowableValues = {Constant.VND_FOO_SERVICE_V1}
         )
       )
     },
-    requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = FooDTOV1.class)))
+    requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = FooDTOV1.class)))
   )
   @ApiResponses(
     value = {
@@ -286,46 +247,36 @@ public class FooControllerV1 {
   public ResponseEntity<Void> update(
     @PathVariable(value = "id") Long id,
     @Valid @RequestBody FooDTOV1 dto,
-    BindingResult bindingResult) throws ServiceException {
+    BindingResult bindingResult) throws NotFoundWebException {
     //--
     try {
-      //
       this.fooServiceV1.update(id, dto);
       //Headers
       HttpHeaders responseHeaders = new HttpHeaders();
       responseHeaders.set(CACHE_CONTROL, "no store, private, max-age=0");
       return new ResponseEntity<>(responseHeaders, HttpStatus.NO_CONTENT);
-    } catch (ServiceException ex) {
-      log.error("{}", ex.getMessage(), ex);
-      throw ex;
+    } catch (FeignNotFoundServiceException ex) {
+      throw new NotFoundWebException(ex.getMessage());
     }
     //---
   }
 
-  /**
-   * Patch a foo by id.
-   *
-   * @param id {@link Integer}
-   * @param patchDocument {@link JsonPatch}
-   * @return Void {@link Void}
-   * @throws ServiceException {@link ServiceException}
-   */
   @Operation(
     summary = "Patch a foo by id.",
     description = "Patch a foo by id.",
     parameters = {
       @Parameter(
-        name= "accept-version",
+        name = "accept-version",
         required = true,
         in = ParameterIn.HEADER,
-        schema=@Schema(
+        schema = @Schema(
           name = "accept-version",
           type = "string",
           allowableValues = {Constant.VND_FOO_SERVICE_V1}
         )
       )
     },
-    requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(mediaType = APPLICATION_JSON_PATCH_VALUE, schema = @Schema(implementation = JsonPatch.class)))
+    requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(mediaType = APPLICATION_JSON_PATCH_VALUE, schema = @Schema(implementation = JsonPatch.class)))
   )
   @ApiResponses(
     value = {
@@ -349,7 +300,7 @@ public class FooControllerV1 {
   public ResponseEntity<Void> patch(
     @PathVariable(value = "id") Long id,
     @RequestBody JsonPatch patchDocument,
-    UriComponentsBuilder ucBuilder) throws ServiceException {
+    UriComponentsBuilder ucBuilder) throws NotFoundWebException {
     //--
     try {
 
@@ -358,26 +309,16 @@ public class FooControllerV1 {
       HttpHeaders responseHeaders = new HttpHeaders();
       responseHeaders.setLocation(ucBuilder.path("/fooes/{id}").buildAndExpand(id).toUri());
       return new ResponseEntity<>(responseHeaders, HttpStatus.NO_CONTENT);
-    } catch (ServiceException ex) {
-      log.error("Error patching: {}", ex.getMessage());
-      throw ex;
+    } catch (FeignNotFoundServiceException ex) {
+      throw new NotFoundWebException(ex.getMessage());
     }
     //---
   }
 
-  /**
-   * Merge foo by id
-   *
-   * @param id
-   * @param mergePatchDocument
-   * @param ucBuilder
-   * @return
-   * @throws ServiceException
-   */
   @Operation(
     summary = "Merge a foo by id.",
     description = "Merge a foo by id.",
-    requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(mediaType = APPLICATION_JSON_MERGE_PATCH_VALUE, schema = @Schema(implementation = JsonMergePatch.class)))
+    requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(mediaType = APPLICATION_JSON_MERGE_PATCH_VALUE, schema = @Schema(implementation = JsonMergePatch.class)))
   )
   @ApiResponses(
     value = {
@@ -400,7 +341,7 @@ public class FooControllerV1 {
   public ResponseEntity<Void> patch(
     @PathVariable(value = "id") Long id,
     @RequestBody JsonMergePatch mergePatchDocument,
-    UriComponentsBuilder ucBuilder) throws ServiceException {
+    UriComponentsBuilder ucBuilder) throws NotFoundWebException {
     //--
     try {
       this.fooServiceV1.merge(id, mergePatchDocument);
@@ -408,27 +349,20 @@ public class FooControllerV1 {
       HttpHeaders responseHeaders = new HttpHeaders();
       responseHeaders.setLocation(ucBuilder.path("/fooes/{id}").buildAndExpand(id).toUri());
       return new ResponseEntity<>(responseHeaders, HttpStatus.NO_CONTENT);
-    } catch (ServiceException ex) {
-      log.error("Error patching: {}", ex.getMessage());
-      throw ex;
+    } catch (FeignNotFoundServiceException ex) {
+      throw new NotFoundWebException(ex.getMessage());
     }
     //---
   }
 
-  /**
-   * Delete a foo by id.
-   *
-   * @param id {@link Integer}
-   * @return ResponseEntity {@link ResponseEntity}
-   */
   @Operation(
     summary = "Delete a foo by id.",
     description = "Delete a foo by id.",
     parameters = {
       @Parameter(
-        name= "accept-version",
+        name = "accept-version",
         required = true, in = ParameterIn.HEADER,
-        schema=@Schema(
+        schema = @Schema(
           name = "accept-version",
           type = "string",
           allowableValues = {Constant.VND_FOO_SERVICE_V1}
@@ -451,20 +385,16 @@ public class FooControllerV1 {
     path = "/fooes/{id}",
     produces = {APPLICATION_JSON_VALUE}
   )
-  public ResponseEntity<Void> delete(@PathVariable(value = "id") Long id) throws ServiceException {
+  public ResponseEntity<Void> delete(@PathVariable(value = "id") Long id) throws NotFoundWebException {
     //--
     try {
       //Headers
       HttpHeaders responseHeaders = new HttpHeaders();
       responseHeaders.set(CACHE_CONTROL, "no store, private, max-age=0");
-
       this.fooServiceV1.delete(id);
-
       return new ResponseEntity<>(responseHeaders, HttpStatus.NO_CONTENT);
-
-    } catch (ServiceException ex) {
-      log.error("{}", ex.getMessage(), ex);
-      throw ex;
+    } catch (FeignNotFoundServiceException ex) {
+      throw new NotFoundWebException(ex.getMessage());
     }
     //---
   }

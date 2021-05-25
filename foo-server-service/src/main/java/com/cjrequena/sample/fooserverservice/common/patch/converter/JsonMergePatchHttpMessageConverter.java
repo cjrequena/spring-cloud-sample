@@ -20,31 +20,31 @@ import javax.json.JsonWriter;
  */
 @Component
 public class JsonMergePatchHttpMessageConverter extends AbstractHttpMessageConverter<JsonMergePatch> {
-  
+
   public JsonMergePatchHttpMessageConverter() {
     super(PatchMediaType.APPLICATION_MERGE_PATCH);
   }
-  
+
   @Override
   protected boolean supports(Class<?> clazz) {
     return JsonMergePatch.class.isAssignableFrom(clazz);
   }
-  
+
   @Override
   protected JsonMergePatch readInternal(Class<? extends JsonMergePatch> clazz, HttpInputMessage inputMessage)
     throws HttpMessageNotReadableException {
-    
+
     try (JsonReader reader = Json.createReader(inputMessage.getBody())) {
       return Json.createMergePatch(reader.readValue());
     } catch (Exception exception) {
       throw new HttpMessageNotReadableException(exception.getMessage(), exception);
     }
   }
-  
+
   @Override
   protected void writeInternal(JsonMergePatch jsonMergePatch, HttpOutputMessage outputMessage)
     throws HttpMessageNotWritableException {
-    
+
     try (JsonWriter writer = Json.createWriter(outputMessage.getBody())) {
       writer.write(jsonMergePatch.toJsonValue());
     } catch (Exception e) {

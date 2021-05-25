@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 })
 @JsonTypeName("error")
 @XmlRootElement
-public class ErrorDTO extends DTO {
+public class ErrorDTO implements DTO {
 
   @JsonProperty(value = "date")
   @Getter(onMethod = @__({@JsonProperty("date")}))

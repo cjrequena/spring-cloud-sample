@@ -1,7 +1,5 @@
 package com.cjrequena.sample.fooclientservice.dto;
 
-import java.io.Serializable;
-
 /**
  * <p>
  * <p>
@@ -13,6 +11,6 @@ import java.io.Serializable;
  * @see
  *
  */
-public abstract class DTO implements Serializable {
+public interface DTO {
 
 }

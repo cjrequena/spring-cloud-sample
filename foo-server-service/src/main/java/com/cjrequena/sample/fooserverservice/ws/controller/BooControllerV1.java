@@ -1,8 +1,13 @@
 package com.cjrequena.sample.fooserverservice.ws.controller;
 
 import com.cjrequena.sample.fooserverservice.dto.BooDTOV1;
-import com.cjrequena.sample.fooserverservice.exception.EErrorCode;
-import com.cjrequena.sample.fooserverservice.exception.ServiceException;
+import com.cjrequena.sample.fooserverservice.exception.service.DBBadRequestServiceException;
+import com.cjrequena.sample.fooserverservice.exception.service.DBConflictServiceException;
+import com.cjrequena.sample.fooserverservice.exception.service.DBConstraintViolationServiceException;
+import com.cjrequena.sample.fooserverservice.exception.service.DBNotFoundServiceException;
+import com.cjrequena.sample.fooserverservice.exception.web.BadRequestWebException;
+import com.cjrequena.sample.fooserverservice.exception.web.ConflictWebException;
+import com.cjrequena.sample.fooserverservice.exception.web.NotFoundWebException;
 import com.cjrequena.sample.fooserverservice.service.BooServiceV1;
 import cz.jirutka.rsql.parser.RSQLParserException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -64,30 +69,22 @@ public class BooControllerV1 {
   @Autowired
   private BooServiceV1 booServiceV1;
 
-  /**
-   * Create a new foo.
-   *
-   * @param dto {@link BooDTOV1}
-   * @param bindingResult {@link BindingResult}
-   * @return ResponseEntity {@link ResponseEntity}
-   * @throws ServiceException {@link ServiceException}
-   */
   @Operation(
     summary = "Create a new boo.",
     description = "Create a new foo.",
     parameters = {
       @Parameter(
-        name= "accept-version",
+        name = "accept-version",
         required = true, in =
         ParameterIn.HEADER,
-        schema=@Schema(
+        schema = @Schema(
           name = "accept-version",
           type = "string",
           allowableValues = {VND_FOO_SERVICE_V1}
         )
       )
     },
-    requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BooDTOV1.class)))
+    requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BooDTOV1.class)))
   )
   @ApiResponses(
     value = {
@@ -108,7 +105,7 @@ public class BooControllerV1 {
   )
   public ResponseEntity<Void> create(
     @Valid @RequestBody BooDTOV1 dto, BindingResult bindingResult,
-    HttpServletRequest request, UriComponentsBuilder ucBuilder) throws ServiceException {
+    HttpServletRequest request, UriComponentsBuilder ucBuilder) throws ConflictWebException, BadRequestWebException {
     //--
     try {
       //
@@ -121,22 +118,14 @@ public class BooControllerV1 {
         .toUri());
       //
       return new ResponseEntity<>(headers, HttpStatus.CREATED);
-    } catch (ServiceException ex) {
-      //log.error("{}", ex.getMessage(), ex);
-      throw ex;
-    } catch (Exception ex) {
-      //log.error("{}", ex.getMessage(), ex);
-      throw new ServiceException(EErrorCode.INTERNAL_SERVER_ERROR.getErrorCode(), ex);
+    } catch (DBConflictServiceException ex) {
+      throw new ConflictWebException();
+    } catch (DBConstraintViolationServiceException ex) {
+      throw new BadRequestWebException();
     }
     //---
   }
 
-  /**
-   * Get a boo by id.
-   *
-   * @param id {@link Integer}
-   * @return ResponseEntity {@link ResponseEntity}
-   */
   @Operation(
     summary = "Get a boo by id.",
     description = "Get a boo by id.",
@@ -170,7 +159,7 @@ public class BooControllerV1 {
     produces = {APPLICATION_JSON_VALUE}
   )
   public ResponseEntity<BooDTOV1> retrieveById(
-    @PathVariable(value = "id") Long id) throws ServiceException {
+    @PathVariable(value = "id") Long id) throws NotFoundWebException {
     //--
     try {
       //Headers
@@ -178,30 +167,23 @@ public class BooControllerV1 {
       responseHeaders.set(CACHE_CONTROL, "no store, private, max-age=0");
       BooDTOV1 dtoRS = this.booServiceV1.retrieveById(id);
       return new ResponseEntity<>(dtoRS, responseHeaders, HttpStatus.OK);
-    } catch (ServiceException ex) {
-      //log.error("{}: {}", ex.getErrorCode(), ex.getMessage(), ex);
-      throw ex;
+    } catch (DBNotFoundServiceException ex) {
+      StringBuilder sb = new StringBuilder();
+      sb.append("FooServerService::FooControllerV1::retrieve::id::").append(id).append("::").append(HttpStatus.NOT_FOUND.getReasonPhrase());
+      throw new NotFoundWebException(sb.toString());
     }
     //---
   }
 
-  /**
-   * Get a list of boos.
-   *
-   * @param offset {@link Integer}
-   * @param limit {@link Integer}
-   * @return ResponseEntity
-   * @throws ServiceException
-   */
   @Operation(
     summary = "Get a list of booes.",
     description = "Get a list of booes.",
     parameters = {
       @Parameter(
-        name= "accept-version",
+        name = "accept-version",
         required = true, in =
         ParameterIn.HEADER,
-        schema=@Schema(
+        schema = @Schema(
           name = "accept-version",
           type = "string",
           allowableValues = {VND_FOO_SERVICE_V1}
@@ -231,56 +213,38 @@ public class BooControllerV1 {
     @RequestParam(value = "sort", required = false) String sort,
     @RequestParam(value = "offset", required = false) Integer offset,
     @RequestParam(value = "limit", required = false) Integer limit
-  ) throws ServiceException {
+  ) throws BadRequestWebException {
     //--
     try {
-
       Page page = this.booServiceV1.retrieve(filters, sort, offset, limit);
-
       HttpHeaders responseHeaders = new HttpHeaders();
       responseHeaders.set(CACHE_CONTROL, "no store, private, max-age=0");
       responseHeaders.set("Total-Count", String.valueOf(page.getTotalElements())); // Total elements in DB.
       responseHeaders.set("Total-Pages", String.valueOf(page.getTotalPages())); // Total pages based on limit/offset
       responseHeaders.set("Number-Of-Elements", String.valueOf(page.getNumberOfElements())); // Total elements in the payload.
       return new ResponseEntity<>(page.getContent(), responseHeaders, HttpStatus.OK);
-    } catch (RSQLParserException ex) {
-      //log.error("{}", ex.getMessage(), ex);
-      throw new ServiceException(EErrorCode.BAD_REQUEST_ERROR.getErrorCode(), ex);
-    } catch (ServiceException ex) {
-      //log.error("{}", ex.getMessage(), ex);
-      throw ex;
-    } catch (Exception ex) {
-      //log.error("{}", ex.getMessage(), ex);
-      throw new ServiceException(EErrorCode.INTERNAL_SERVER_ERROR.getErrorCode(), ex);
+    } catch (DBBadRequestServiceException | RSQLParserException ex) {
+      throw new BadRequestWebException();
     }
     //--
   }
 
-  /**
-   * Update a boo by id.
-   *
-   * @param id {@link Integer}
-   * @param dto {@link BooDTOV1}
-   * @param bindingResult {@link BindingResult}
-   * @return Void {@link Void}
-   * @throws ServiceException {@link ServiceException}
-   */
   @Operation(
     summary = "Update a boo by id.",
     description = "Update a boo by id.",
     parameters = {
       @Parameter(
-        name= "accept-version",
+        name = "accept-version",
         required = true,
         in = ParameterIn.HEADER,
-        schema=@Schema(
+        schema = @Schema(
           name = "accept-version",
           type = "string",
           allowableValues = {VND_FOO_SERVICE_V1}
         )
       )
     },
-    requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BooDTOV1.class)))
+    requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BooDTOV1.class)))
   )
   @ApiResponses(
     value = {
@@ -302,46 +266,37 @@ public class BooControllerV1 {
   public ResponseEntity<Void> update(
     @PathVariable(value = "id") Long id,
     @Valid @RequestBody BooDTOV1 dto,
-    BindingResult bindingResult) throws ServiceException {
+    BindingResult bindingResult) throws NotFoundWebException {
     //--
     try {
-      //
-      this.booServiceV1.update(id, dto);
+      dto.setId(id);
+      this.booServiceV1.update(dto);
       //Headers
       HttpHeaders responseHeaders = new HttpHeaders();
       responseHeaders.set(CACHE_CONTROL, "no store, private, max-age=0");
       return new ResponseEntity<>(responseHeaders, HttpStatus.NO_CONTENT);
-    } catch (ServiceException ex) {
-      //log.error("{}", ex.getMessage(), ex);
-      throw ex;
+    } catch (DBNotFoundServiceException ex) {
+      throw new NotFoundWebException();
     }
     //---
   }
 
-  /**
-   * Patch a boo by id.
-   *
-   * @param id {@link Integer}
-   * @param patchDocument {@link JsonPatch}
-   * @return Void {@link Void}
-   * @throws ServiceException {@link ServiceException}
-   */
   @Operation(
     summary = "Patch a boo by id.",
     description = "Patch a boo by id.",
     parameters = {
       @Parameter(
-        name= "accept-version",
+        name = "accept-version",
         required = true,
         in = ParameterIn.HEADER,
-        schema=@Schema(
+        schema = @Schema(
           name = "accept-version",
           type = "string",
           allowableValues = {VND_FOO_SERVICE_V1}
         )
       )
     },
-    requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(mediaType = APPLICATION_JSON_PATCH_VALUE, schema = @Schema(implementation = JsonPatch.class)))
+    requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(mediaType = APPLICATION_JSON_PATCH_VALUE, schema = @Schema(implementation = JsonPatch.class)))
   )
   @ApiResponses(
     value = {
@@ -365,34 +320,24 @@ public class BooControllerV1 {
   public ResponseEntity<Void> patch(
     @PathVariable(value = "id") Long id,
     @RequestBody JsonPatch patchDocument,
-    UriComponentsBuilder ucBuilder) throws ServiceException {
+    UriComponentsBuilder ucBuilder) throws NotFoundWebException {
     //--
     try {
-
       this.booServiceV1.patch(id, patchDocument);
       //Headers
       HttpHeaders responseHeaders = new HttpHeaders();
       responseHeaders.setLocation(ucBuilder.path("/booes/{id}").buildAndExpand(id).toUri());
       return new ResponseEntity<>(responseHeaders, HttpStatus.NO_CONTENT);
-    } catch (ServiceException ex) {
-      log.error("Error patching: {}", ex.getMessage());
-      throw ex;
+    } catch (DBNotFoundServiceException ex) {
+      throw new NotFoundWebException();
     }
     //---
   }
 
-  /**
-   * Merge a boo by id.
-   *
-   * @param id {@link Integer}
-   * @param mergePatchDocument {@link JsonMergePatch}
-   * @return Void {@link Void}
-   * @throws ServiceException {@link ServiceException}
-   */
   @Operation(
     summary = "Patch a boo by id.",
     description = "Patch a boo by id.",
-    requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(mediaType = APPLICATION_JSON_MERGE_PATCH_VALUE, schema = @Schema(implementation = JsonMergePatch.class)))
+    requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(mediaType = APPLICATION_JSON_MERGE_PATCH_VALUE, schema = @Schema(implementation = JsonMergePatch.class)))
   )
   @ApiResponses(
     value = {
@@ -415,7 +360,7 @@ public class BooControllerV1 {
   public ResponseEntity<Void> patch(
     @PathVariable(value = "id") Long id,
     @RequestBody JsonMergePatch mergePatchDocument,
-    UriComponentsBuilder ucBuilder) throws ServiceException {
+    UriComponentsBuilder ucBuilder) throws NotFoundWebException {
     //--
     try {
       this.booServiceV1.patch(id, mergePatchDocument);
@@ -423,9 +368,8 @@ public class BooControllerV1 {
       HttpHeaders responseHeaders = new HttpHeaders();
       responseHeaders.setLocation(ucBuilder.path("/booes/{id}").buildAndExpand(id).toUri());
       return new ResponseEntity<>(responseHeaders, HttpStatus.NO_CONTENT);
-    } catch (ServiceException ex) {
-      log.error("Error patching: {}", ex.getMessage());
-      throw ex;
+    } catch (DBNotFoundServiceException ex) {
+      throw new NotFoundWebException();
     }
     //---
   }
@@ -467,22 +411,17 @@ public class BooControllerV1 {
     path = "/booes/{id}",
     produces = {APPLICATION_JSON_VALUE}
   )
-  public ResponseEntity<Void> delete(@PathVariable(value = "id") Long id) throws ServiceException {
+  public ResponseEntity<Void> delete(@PathVariable(value = "id") Long id) throws NotFoundWebException {
     //--
     try {
       //Headers
       HttpHeaders responseHeaders = new HttpHeaders();
       responseHeaders.set(CACHE_CONTROL, "no store, private, max-age=0");
-
       this.booServiceV1.delete(id);
-
       return new ResponseEntity<>(responseHeaders, HttpStatus.NO_CONTENT);
-
-    } catch (ServiceException ex) {
-      //log.error("{}", ex.getMessage(), ex);
-      throw ex;
+    } catch (DBNotFoundServiceException ex) {
+      throw new NotFoundWebException();
     }
     //---
   }
-
 }

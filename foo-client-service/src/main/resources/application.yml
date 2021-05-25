@@ -82,7 +82,7 @@ feign:
         connectTimeout: 5000
         readTimeout: 5000
         loggerLevel: basic
-        errorDecoder: com.cjrequena.sample.fooclientservice.exception.DefaultFeignErrorDecoder
+        #errorDecoder: com.cjrequena.sample.fooclientservice.exception.DefaultFeignErrorDecoder
 
 spring.cloud.circuitbreaker.resilience4j.enabled: true
 # resilience4j circuit breaker configuration [https://resilience4j.readme.io/docs/circuitbreaker]
@@ -155,4 +155,4 @@ resilience4j.timelimiter:
       timeoutDuration: 2s
       cancelRunningFuture: true
 
-foo-server-service.url: #localhost:9080
+foo-server-service.url: localhost:9080

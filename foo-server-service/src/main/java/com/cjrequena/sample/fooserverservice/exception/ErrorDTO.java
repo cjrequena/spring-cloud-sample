@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.Getter;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
 /**
  * <p>
@@ -15,22 +16,18 @@ import javax.xml.bind.annotation.XmlRootElement;
  * <p>
  * <p>
  * @author cjrequena
- * @version 1.0
- * @since JDK1.8
- * @see
- *
  */
 @Data
 @JsonPropertyOrder(value = {
   "date",
   "status",
-  "errorCode",
+  "error_code",
   "message",
   "more_info"
 })
 @JsonTypeName("error")
 @XmlRootElement
-public class ErrorDTO extends DTO {
+public class ErrorDTO implements DTO, Serializable {
 
   @JsonProperty(value = "date")
   @Getter(onMethod = @__({@JsonProperty("date")}))

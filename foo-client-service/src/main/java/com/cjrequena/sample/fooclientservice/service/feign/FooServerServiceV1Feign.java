@@ -1,7 +1,9 @@
 package com.cjrequena.sample.fooclientservice.service.feign;
 
 import com.cjrequena.sample.fooclientservice.dto.FooDTOV1;
-import com.cjrequena.sample.fooclientservice.exception.ServiceException;
+import com.cjrequena.sample.fooclientservice.exception.service.FeignBadRequestServiceException;
+import com.cjrequena.sample.fooclientservice.exception.service.FeignConflictServiceException;
+import com.cjrequena.sample.fooclientservice.exception.service.FeignNotFoundServiceException;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,43 +36,21 @@ import static com.cjrequena.sample.fooclientservice.common.Constant.VND_FOO_SERV
 @RequestMapping(value = "/foo-server-service", headers = {"Accept-Version=" + VND_FOO_SERVICE_V1})
 public interface FooServerServiceV1Feign {
 
-  /**
-   *
-   * @param dto
-   * @return
-   * @throws ServiceException
-   */
   @PostMapping(value = "/fooes",
     produces = {
       MediaType.APPLICATION_JSON_VALUE
     }
   )
-  ResponseEntity<Void> create(@RequestBody FooDTOV1 dto) throws ServiceException;
+  ResponseEntity<Void> create(@RequestBody FooDTOV1 dto) throws FeignConflictServiceException, FeignBadRequestServiceException;
 
-  /**
-   *
-   * @param id
-   * @return
-   * @throws ServiceException
-   */
   @GetMapping(
     path = "/fooes/{id}",
     produces = {
       MediaType.APPLICATION_JSON_VALUE
     }
   )
-  ResponseEntity<FooDTOV1> retrieveById(@PathVariable(value = "id") Long id) throws ServiceException;
+  ResponseEntity<FooDTOV1> retrieveById(@PathVariable(value = "id") Long id) throws FeignNotFoundServiceException;
 
-  /**
-   *
-   * @param fields
-   * @param filters
-   * @param sort
-   * @param offset
-   * @param limit
-   * @return
-   * @throws ServiceException
-   */
   @GetMapping(
     path = "/fooes",
     produces = {
@@ -82,15 +62,9 @@ public interface FooServerServiceV1Feign {
     @RequestParam(value = "filters") String filters,
     @RequestParam(value = "sort") String sort,
     @RequestParam(value = "offset") Integer offset,
-    @RequestParam(value = "limit") Integer limit) ;
+    @RequestParam(value = "limit") Integer limit
+  ) throws FeignBadRequestServiceException;
 
-  /**
-   *
-   * @param id
-   * @param dto
-   * @return
-   * @throws ServiceException
-   */
   @PutMapping(
     path = "/fooes/{id}",
     produces = {
@@ -100,47 +74,33 @@ public interface FooServerServiceV1Feign {
   ResponseEntity<Void> update(
     @PathVariable(value = "id") Long id,
     @RequestBody FooDTOV1 dto
-  ) throws ServiceException;
+  ) throws FeignNotFoundServiceException;
 
-  /**
-   *
-   * @param id
-   * @param patchDocument
-   * @return
-   * @throws ServiceException
-   */
   @PatchMapping(
     path = "/fooes/{id}",
     produces = {MediaType.APPLICATION_JSON_VALUE},
     consumes = {"application/json-patch+json"}
   )
-  ResponseEntity<Void> patch(@PathVariable(value = "id") Long id, @RequestBody JsonPatch patchDocument) throws ServiceException;
+  ResponseEntity<Void> patch(
+    @PathVariable(value = "id") Long id,
+    @RequestBody JsonPatch patchDocument
+  ) throws FeignNotFoundServiceException;
 
-  /**
-   *
-   * @param id
-   * @param mergePatchDocument
-   * @return
-   * @throws ServiceException
-   */
   @PatchMapping(
     path = "/fooes/{id}",
     produces = {MediaType.APPLICATION_JSON_VALUE},
     consumes = {"application/merge-patch+json"}
   )
-  ResponseEntity<Void> patch(@PathVariable(value = "id") Long id, @RequestBody JsonMergePatch mergePatchDocument) throws ServiceException;
+  ResponseEntity<Void> patch(
+    @PathVariable(value = "id") Long id,
+    @RequestBody JsonMergePatch mergePatchDocument
+  ) throws FeignNotFoundServiceException;
 
-  /**
-   *
-   * @param id
-   * @return
-   * @throws ServiceException
-   */
   @DeleteMapping(
     path = "/fooes/{id}",
     produces = {
       MediaType.APPLICATION_JSON_VALUE
     }
   )
-  ResponseEntity<Void> delete(@PathVariable(value = "id") Long id) throws ServiceException;
+  ResponseEntity<Void> delete(@PathVariable(value = "id") Long id) throws FeignNotFoundServiceException;
 }

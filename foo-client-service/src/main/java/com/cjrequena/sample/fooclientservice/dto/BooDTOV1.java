@@ -2,11 +2,13 @@ package com.cjrequena.sample.fooclientservice.dto;
 
 import com.cjrequena.sample.fooclientservice.dto.serializer.LocalDateDeserializer;
 import com.cjrequena.sample.fooclientservice.dto.serializer.LocalDateSerializer;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.Getter;
 
@@ -21,9 +23,6 @@ import java.time.LocalDate;
  * <p>
  * <p>
  * @author cjrequena
- * @version 1.0
- * @since JDK1.8
- * @see
  *
  */
 @Data
@@ -31,25 +30,29 @@ import java.time.LocalDate;
   "id",
   "name",
   "description",
-  "creationDate"
+  "creation_date"
 })
 @JsonTypeName("boo")
 @XmlRootElement
-public class BooDTOV1 extends DTO implements Serializable {
+@Schema(name = "Boo", description = "BooDTOV1")
+public class BooDTOV1 implements DTO, Serializable {
 
   //@NotNull(message = "id is required field")
   @JsonProperty(value = "id")
   @Getter(onMethod = @__({@JsonProperty("id")}))
+  @Schema(name = "id", accessMode = Schema.AccessMode.READ_ONLY)
   private Long id;
 
   @NotNull(message = "name is a required field")
   @JsonProperty(value = "name", required = true)
   @Getter(onMethod = @__({@JsonProperty("name")}))
+  @Schema(name = "name", required = true)
   private String name;
 
   //@NotNull(message = "description is a required field")
   @JsonProperty(value = "description")
   @Getter(onMethod = @__({@JsonProperty("description")}))
+  @Schema(name = "description")
   private String description;
 
   //@NotNull(message = "Creation Date is a required field")
@@ -57,6 +60,8 @@ public class BooDTOV1 extends DTO implements Serializable {
   @Getter(onMethod = @__({@JsonProperty("creation_date")}))
   @JsonDeserialize(using = LocalDateDeserializer.class)
   @JsonSerialize(using = LocalDateSerializer.class)
+  @Schema(example = "yyyy-MM-dd", name = "creation_date", accessMode = Schema.AccessMode.READ_ONLY)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   private LocalDate creationDate;
 
 }

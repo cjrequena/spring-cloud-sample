@@ -36,8 +36,9 @@ public class CircuitBreakerConfiguration {
     reactiveResilience4JCircuitBreakerFactory.configureCircuitBreakerRegistry(circuitBreakerRegistry);
     return reactiveResilience4JCircuitBreakerFactory;
   }
+
   @Bean
-  public Map<String, Number>  checkCircuitBreakerConfiguration() {
+  public Map<String, Number> checkCircuitBreakerConfiguration() {
 
     BulkheadRegistry bulkheadRegistry = BulkheadRegistry.ofDefaults();
     ThreadPoolBulkheadRegistry threadPoolBulkheadRegistry = ThreadPoolBulkheadRegistry.ofDefaults();

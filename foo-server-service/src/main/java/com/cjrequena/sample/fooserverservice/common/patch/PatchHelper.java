@@ -52,12 +52,10 @@ public class PatchHelper {
   }
 
   private JsonValue applyPatch(JsonPatch patch, JsonStructure target) {
-
     return patch.apply(target);
   }
 
   private JsonValue applyMergePatch(JsonMergePatch mergePatch, JsonValue target) {
-
     return mergePatch.apply(target);
   }
 

@@ -1,12 +1,14 @@
 package com.cjrequena.sample.fooclientservice.exception;
 
+import com.cjrequena.sample.fooclientservice.exception.service.FeignBadRequestServiceException;
+import com.cjrequena.sample.fooclientservice.exception.service.FeignConflictServiceException;
+import com.cjrequena.sample.fooclientservice.exception.service.FeignNotFoundServiceException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import feign.jackson.JacksonDecoder;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -48,8 +50,16 @@ public class DefaultFeignErrorDecoder implements ErrorDecoder {
     try {
       ErrorDTO errorDTO = (ErrorDTO) jacksonDecoder.decode(response, ErrorDTO.class);
       if (errorDTO != null) {
-        log.debug(errorDTO.getMessage());
-        return new ServiceException(errorDTO, HttpStatus.valueOf(errorDTO.getStatus()));
+        switch (errorDTO.getStatus()) {
+          case 404: // HttpStatus.NOT_FOUND.value()
+            return new FeignNotFoundServiceException(errorDTO.toString());
+          case 409: // HttpStatus.CONFLICT.value()
+            return new FeignConflictServiceException(errorDTO.toString());
+          case 400: // HttpStatus.BAD_REQUEST.value()
+            return new FeignBadRequestServiceException(errorDTO.toString());
+          default:
+            return new FeignBadRequestServiceException(errorDTO.toString());
+        }
       }
 
     } catch (IOException e) { //NOSONAR

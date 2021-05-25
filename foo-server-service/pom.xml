@@ -15,11 +15,11 @@
         <start-class>com.cjrequena.sample.fooserverservice.ServerServiceApplication</start-class>
     </properties>
     <dependencies>
-<!--        <dependency>-->
-<!--            <groupId>eu.jaspe</groupId>-->
-<!--            <artifactId>jaspe</artifactId>-->
-<!--            <version>${jaspe.version}</version>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>eu.jaspe</groupId>-->
+        <!--            <artifactId>jaspe</artifactId>-->
+        <!--            <version>${jaspe.version}</version>-->
+        <!--        </dependency>-->
         <!-- spring boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -45,10 +45,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-webflux</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.boot</groupId>-->
+        <!--            <artifactId>spring-boot-starter-webflux</artifactId>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -185,10 +185,10 @@
             <version>${springdoc-openapi-ui.version}</version>
         </dependency>
         <!-- -->
+        <!-- https://mvnrepository.com/artifact/io.github.openfeign/feign-jackson -->
         <dependency>
-            <groupId>com.netflix.feign</groupId>
+            <groupId>io.github.openfeign</groupId>
             <artifactId>feign-jackson</artifactId>
-            <version>${feign-jackson.version}</version>
         </dependency>
         <!-- JSR-374 (JSON Processing) API: Patch Operation Support-->
         <!--https://mvnrepository.com/artifact/javax.json/javax.json-api-->

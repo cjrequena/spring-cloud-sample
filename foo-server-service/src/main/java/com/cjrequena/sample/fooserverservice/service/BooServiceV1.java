@@ -7,8 +7,10 @@ import com.cjrequena.sample.fooserverservice.db.repository.BooRepository;
 import com.cjrequena.sample.fooserverservice.db.rsql.CustomRsqlVisitor;
 import com.cjrequena.sample.fooserverservice.db.rsql.RsqlSearchOperation;
 import com.cjrequena.sample.fooserverservice.dto.BooDTOV1;
-import com.cjrequena.sample.fooserverservice.exception.EErrorCode;
-import com.cjrequena.sample.fooserverservice.exception.ServiceException;
+import com.cjrequena.sample.fooserverservice.exception.service.DBBadRequestServiceException;
+import com.cjrequena.sample.fooserverservice.exception.service.DBConflictServiceException;
+import com.cjrequena.sample.fooserverservice.exception.service.DBConstraintViolationServiceException;
+import com.cjrequena.sample.fooserverservice.exception.service.DBNotFoundServiceException;
 import com.cjrequena.sample.fooserverservice.mapper.BooDtoEntityMapper;
 import cz.jirutka.rsql.parser.RSQLParser;
 import cz.jirutka.rsql.parser.ast.Node;
@@ -21,7 +23,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.mapping.PropertyReferenceException;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,28 +36,26 @@ import java.util.Optional;
  * <p>
  * <p>
  *
- * @author
- * @version 1.0
- * @see
- * @since JDK1.8
+ * @author cjrequena
  */
 @Log4j2
 @Service
 @Transactional
 public class BooServiceV1 {
 
-  private BooDtoEntityMapper fooDtoEntityMapper;
-  private BooRepository fooRepository;
+  private BooDtoEntityMapper booDtoEntityMapper;
+  private BooRepository booRepository;
   private ApplicationEventPublisher eventPublisher;
   private final PatchHelper patchHelper;
+
   /**
    *
-   * @param fooRepository
+   * @param booRepository
    */
   @Autowired
-  public BooServiceV1(BooRepository fooRepository, BooDtoEntityMapper fooDtoEntityMapper, ApplicationEventPublisher eventPublisher, PatchHelper patchHelper) {
-    this.fooRepository = fooRepository;
-    this.fooDtoEntityMapper = fooDtoEntityMapper;
+  public BooServiceV1(BooRepository booRepository, BooDtoEntityMapper booDtoEntityMapper, ApplicationEventPublisher eventPublisher, PatchHelper patchHelper) {
+    this.booRepository = booRepository;
+    this.booDtoEntityMapper = booDtoEntityMapper;
     this.eventPublisher = eventPublisher;
     this.patchHelper = patchHelper;
   }
@@ -65,186 +64,103 @@ public class BooServiceV1 {
    *
    * @param dto
    * @return
-   * @throws ServiceException
+   * @throws DBConstraintViolationServiceException
    */
-  public BooDTOV1 create(BooDTOV1 dto) throws ServiceException {
-    try {
-      BooEntity entity = fooDtoEntityMapper.toEntity(dto);
-
-      if (entity.getId() != null && fooRepository.existsById(entity.getId())) {
-        throw new ServiceException(EErrorCode.CONFLICT_ERROR.getErrorCode());
+  public BooDTOV1 create(BooDTOV1 dto) throws DBConstraintViolationServiceException, DBConflictServiceException {
+    final Optional<BooEntity> optionalEntity = this.booRepository.findByName(dto.getName());
+    if (optionalEntity.isPresent()) {
+      throw new DBConflictServiceException();
+    } else {
+      BooEntity entity = booDtoEntityMapper.toEntity(dto);
+      try {
+        entity = booRepository.saveAndFlush(entity);
+      } catch (DataIntegrityViolationException ex) {
+        if ((ex.getCause() != null) && (ex.getCause() instanceof ConstraintViolationException)) {
+          throw new DBConstraintViolationServiceException();
+        }
       }
-
-      entity = fooRepository.saveAndFlush(entity);
-      dto = fooDtoEntityMapper.toDTO(entity);
-      //eventPublisher.publishEvent(new MessageEvent<BooDTOV1>(dto, MessageEventAction.CREATE, BooChannels.EVENT_NOTIFICATION_CHANNEL));
+      dto = booDtoEntityMapper.toDTO(entity);
       return dto;
-    } catch (DataIntegrityViolationException ex) {
-      if ((ex.getCause() != null) && (ex.getCause() instanceof ConstraintViolationException)) {
-        throw new ServiceException(EErrorCode.CONFLICT_ERROR.getErrorCode(), ex.getCause());
-      }
-      throw ex;
-    } catch (ServiceException ex) {
-      log.error("{}", ex.getMessage());
-      throw ex;
-    } catch (Exception ex) {
-      log.error("{}", ex.getMessage());
-      throw new ServiceException(EErrorCode.INTERNAL_SERVER_ERROR.getErrorCode(), ex);
     }
   }
 
-  /**
-   *
-   * @param id
-   * @return
-   * @throws ServiceException
-   */
-  public BooDTOV1 retrieveById(Long id) throws ServiceException {
+  public BooDTOV1 retrieveById(Long id) throws DBNotFoundServiceException {
     //--
-    try {
-      Optional<BooEntity> entity = this.fooRepository.findById(id);
-      if (!entity.isPresent()) {
-        throw new ServiceException(EErrorCode.NOT_FOUND_ERROR.getErrorCode());
-      }
-      return fooDtoEntityMapper.toDTO(entity.get());
-    } catch (ServiceException ex) {
-      log.error("{}", ex.getMessage());
-      throw ex;
-    } catch (Exception ex) {
-      log.error("{}", ex.getMessage());
-      throw new ServiceException(EErrorCode.INTERNAL_SERVER_ERROR.getErrorCode(), ex);
+    Optional<BooEntity> entity = this.booRepository.findById(id);
+    if (!entity.isPresent()) {
+      throw new DBNotFoundServiceException();
     }
+    return booDtoEntityMapper.toDTO(entity.get());
     //--
   }
 
-  /**
-   *
-   * @param search
-   * @param offset
-   * @param limit
-   * @param sort
-   * @return
-   * @throws ServiceException
-   */
-  public Page retrieve(String search, String sort, Integer offset, Integer limit) throws ServiceException {
+  public Page retrieve(String search, String sort, Integer offset, Integer limit) throws DBBadRequestServiceException {
     //--
     try {
       Page<BooEntity> page;
       Specification<BooEntity> specification;
       Pageable pageable = OffsetLimitRequestBuilder.create(offset, limit, sort);
-
       if (search != null) {
         Node rootNode = new RSQLParser(RsqlSearchOperation.defaultOperators()).parse(search);
         specification = rootNode.accept(new CustomRsqlVisitor<>());
-        page = this.fooRepository.findAll(specification, pageable);
+        page = this.booRepository.findAll(specification, pageable);
       } else {
-        page = this.fooRepository.findAll(pageable);
+        page = this.booRepository.findAll(pageable);
       }
-
-      return page.map(entity -> fooDtoEntityMapper.toDTO(entity));
+      return page.map(entity -> booDtoEntityMapper.toDTO(entity));
     } catch (PropertyReferenceException ex) {
       log.error("{}", ex.getMessage());
-      throw new ServiceException(EErrorCode.BAD_REQUEST_ERROR.getErrorCode(), ex);
+      throw new DBBadRequestServiceException();
     }
     //--
   }
 
-  /**
-   *
-   * @param id
-   * @param dto
-   * @throws ServiceException
-   */
-  public BooDTOV1 update(Long id, BooDTOV1 dto) throws ServiceException {
-    //--
-    try {
-      if (!fooRepository.existsById(id)) {
-        throw new ServiceException(EErrorCode.NOT_FOUND_ERROR.getErrorCode());
+  public BooDTOV1 update(BooDTOV1 dto) throws DBNotFoundServiceException {
+    Optional<BooEntity> optionalEntity = booRepository.findById(dto.getId());
+    optionalEntity.ifPresent(
+      entity -> {
+        entity = booDtoEntityMapper.toEntity(dto);
+        booRepository.saveAndFlush(entity);
+        log.debug("Updated User: {}", entity);
       }
-      BooEntity entity = fooDtoEntityMapper.toEntity(dto);
-      entity.setId(id);
-      // Check NOT MODIFIED error
-      BooEntity oldEntity = fooDtoEntityMapper.toEntity(retrieveById(id));
-      if (!entity.equals(oldEntity)) {
-        // Save on database
-        this.fooRepository.save(entity);
-      } else {
-        throw new ServiceException(EErrorCode.NOT_MODIFIED_ERROR.getErrorCode(), HttpStatus.NOT_MODIFIED);
-      }
-      dto = fooDtoEntityMapper.toDTO(entity);
-      //eventPublisher.publishEvent(new MessageEvent<BooDTOV1>(dto, MessageEventAction.UPDATE, BooChannels.EVENT_NOTIFICATION_CHANNEL));
-      return dto;
-    } catch (ServiceException ex) {
-      log.error("{}", ex.getMessage());
-      throw ex;
-    } catch (Exception ex) {
-      log.error("{}", ex.getMessage());
-      throw new ServiceException(EErrorCode.INTERNAL_SERVER_ERROR.getErrorCode(), ex);
-    }
+    );
+    optionalEntity.orElseThrow(() -> new DBNotFoundServiceException());
+    return booDtoEntityMapper.toDTO(optionalEntity.get());
   }
 
-  public BooDTOV1 patch(Long id, JsonPatch patchDocument) throws ServiceException {
+  public BooDTOV1 patch(Long id, JsonPatch patchDocument) throws DBNotFoundServiceException {
     // --
-    try {
-      BooDTOV1 originalDTO = retrieveById(id);
-      if (originalDTO == null) {
-        throw new ServiceException(EErrorCode.NOT_FOUND_ERROR.getErrorCode());
-      }
-      BooEntity entity = fooDtoEntityMapper.toEntity(originalDTO);
-      BooDTOV1 dtoPatched = patchHelper.patch(patchDocument, originalDTO, BooDTOV1.class);
-      fooDtoEntityMapper.toEntity(dtoPatched, entity);
-      this.fooRepository.save(entity);
-      return dtoPatched;
-    } catch (ServiceException ex) {
-      log.error("{}", ex.getMessage());
-      throw ex;
-    } catch (Exception ex) {
-      log.error("{}", ex.getMessage());
-      throw new ServiceException(EErrorCode.INTERNAL_SERVER_ERROR.getErrorCode(), ex);
+    BooDTOV1 originalDTO = retrieveById(id);
+    if (originalDTO == null) {
+      throw new DBNotFoundServiceException();
     }
+    BooEntity entity = booDtoEntityMapper.toEntity(originalDTO);
+    BooDTOV1 dtoPatched = patchHelper.patch(patchDocument, originalDTO, BooDTOV1.class);
+    booDtoEntityMapper.toEntity(dtoPatched, entity);
+    this.booRepository.save(entity);
+    return dtoPatched;
   }
 
-  public BooDTOV1 patch(Long id, JsonMergePatch mergePatchDocument) throws ServiceException {
-    try {
-      BooDTOV1 fooDTO = retrieveById(id);
-      if (fooDTO == null) {
-        throw new ServiceException(EErrorCode.NOT_FOUND_ERROR.getErrorCode());
-      }
-      BooEntity entity = fooDtoEntityMapper.toEntity(fooDTO);
-      BooDTOV1 dtoMergePatched = patchHelper.mergePatch(mergePatchDocument, fooDTO, BooDTOV1.class);
-      fooDtoEntityMapper.toEntity(dtoMergePatched, entity);
-      this.fooRepository.save(entity);
-      return dtoMergePatched;
-    } catch (ServiceException ex) {
-      log.error("{}", ex.getMessage());
-      throw ex;
-    } catch (Exception ex) {
-      log.error("{}", ex.getMessage());
-      throw new ServiceException(EErrorCode.INTERNAL_SERVER_ERROR.getErrorCode(), ex);
+  public BooDTOV1 patch(Long id, JsonMergePatch mergePatchDocument) throws DBNotFoundServiceException {
+    BooDTOV1 booDTO = retrieveById(id);
+    if (booDTO == null) {
+      throw new DBNotFoundServiceException();
     }
+    BooEntity entity = booDtoEntityMapper.toEntity(booDTO);
+    BooDTOV1 dtoMergePatched = patchHelper.mergePatch(mergePatchDocument, booDTO, BooDTOV1.class);
+    booDtoEntityMapper.toEntity(dtoMergePatched, entity);
+    this.booRepository.save(entity);
+    return dtoMergePatched;
   }
 
-  /**
-   *
-   * @param id
-   * @throws ServiceException
-   */
-  public void delete(Long id) throws ServiceException {
-    //--
-    try {
-      if (!fooRepository.existsById(id)) {
-        throw new ServiceException(EErrorCode.NOT_FOUND_ERROR.getErrorCode());
+  public void delete(Long id) throws DBNotFoundServiceException {
+    Optional<BooEntity> optionalEntity = booRepository.findById(id);
+    optionalEntity.ifPresent(
+      foo -> {
+        booRepository.delete(foo);
+        log.debug("Deleted User: {}", foo);
       }
-      BooEntity entity = this.fooRepository.findById(id).get();
-      BooDTOV1 dto = fooDtoEntityMapper.toDTO(entity);
-      this.fooRepository.deleteById(id);
-      //eventPublisher.publishEvent(new MessageEvent<BooDTOV1>(dto, MessageEventAction.DELETE, BooChannels.EVENT_NOTIFICATION_CHANNEL));
-    } catch (ServiceException ex) {
-      log.error("{}", ex.getMessage());
-      throw ex;
-    } catch (Exception ex) {
-      log.error("{}", ex.getMessage());
-      throw new ServiceException(EErrorCode.INTERNAL_SERVER_ERROR.getErrorCode(), ex);
-    }
+    );
+    optionalEntity.orElseThrow(() -> new DBNotFoundServiceException());
   }
 }
