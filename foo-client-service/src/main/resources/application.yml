@@ -100,6 +100,7 @@ resilience4j.circuitbreaker:
       minimumNumberOfCalls: 100
       waitDurationInOpenState: 6000ms
       automaticTransitionFromOpenToHalfOpenEnabled: false
+      max-wait-duration-in-half-open-state: 1ms
       recordExceptions:
       ignoreExceptions:
     test:
