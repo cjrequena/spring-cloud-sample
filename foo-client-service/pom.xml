@@ -58,16 +58,14 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
         <!-- Spring Cloud -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter</artifactId>
@@ -169,7 +167,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>${springdoc-openapi-ui.version}</version>
+            <version>${springdoc.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/io.github.openfeign/feign-jackson -->
         <dependency>
@@ -262,9 +260,6 @@
                                 <requireJavaVersion>
                                     <version>[${java.version},)</version>
                                 </requireJavaVersion>
-                                <requireMavenVersion>
-                                    <version>[${maven.version},)</version>
-                                </requireMavenVersion>
                             </rules>
                         </configuration>
                     </execution>

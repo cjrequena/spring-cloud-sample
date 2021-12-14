@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.11.RELEASE</version>
+        <version>2.5.7</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <modules>
@@ -25,17 +25,11 @@
         <!-- -->
         <jaspe.version>1.0.0</jaspe.version>
         <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-dependencies -->
-        <spring-cloud-dependencies.version>Hoxton.SR11</spring-cloud-dependencies.version>
+        <spring-cloud-dependencies.version>2020.0.4</spring-cloud-dependencies.version>
         <!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui -->
-        <springdoc-openapi-ui.version>1.4.4</springdoc-openapi-ui.version>
-        <!--https://mvnrepository.com/artifact/org.mapstruct/mapstruct-jdk8-->
+        <springdoc.version>1.5.12</springdoc.version>
+        <!-- https://mvnrepository.com/artifact/org.mapstruct/mapstruct -->
         <mapstruct.version>1.4.2.Final</mapstruct.version>
-        <!--https://mvnrepository.com/artifact/com.jcabi/jcabi-manifests-->
-        <jcabi-manifests.version>1.1</jcabi-manifests.version>
-        <!--https://mvnrepository.com/artifact/org.scala-lang/scala-library-->
-        <scala-library.version>2.12.8</scala-library.version>
-        <!--https://mvnrepository.com/artifact/org.scala-lang/scala-xml-->
-        <scala-xml.version>2.11.0-M4</scala-xml.version>
         <!--https://mvnrepository.com/artifact/com.googlecode.cqengine/cqengine-->
         <cqengine.version>3.2.0</cqengine.version>
         <!--https://mvnrepository.com/artifact/cz.jirutka.rsql/rsql-parser-->

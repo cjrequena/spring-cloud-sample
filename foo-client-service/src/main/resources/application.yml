@@ -1,8 +1,3 @@
-#-----------------------------------------------------------------------------------------------
-# DEFAULT
-#-----------------------------------------------------------------------------------------------
-spring.main.allow-bean-definition-overriding: true
-
 # INFO
 info:
   service_name: ${spring.application.name}
@@ -20,12 +15,10 @@ info:
   git.commit.user.email: ${git.commit.user.email}
   git.remote.origin.url: ${git.remote.origin.url}
 
+spring.main.allow-bean-definition-overriding: true # Enable bean override
+
 ---
-#-----------------------------------------------------------------------------------------------
-# PROFILE LOCAL
-#-----------------------------------------------------------------------------------------------
-spring:
-  profiles: local
+spring.config.activate.on-profile: local
 
 # ----------------------------------------
 # ACTUATOR PROPERTIES
@@ -84,8 +77,9 @@ feign:
         loggerLevel: basic
         #errorDecoder: com.cjrequena.sample.fooclientservice.exception.DefaultFeignErrorDecoder
 
-spring.cloud.circuitbreaker.resilience4j.enabled: true
+# RESILIENCE4J
 # resilience4j circuit breaker configuration [https://resilience4j.readme.io/docs/circuitbreaker]
+spring.cloud.circuitbreaker.resilience4j.enabled: true
 resilience4j.circuitbreaker:
   configs:
     default:
@@ -155,5 +149,16 @@ resilience4j.timelimiter:
     foo-service:
       timeoutDuration: 2s
       cancelRunningFuture: true
+
+# SWAGGER
+springdoc:
+  api-docs:
+    groups:
+      enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    display-request-duration: true
+    groups-order: DESC
+  version: '@springdoc.version@'
 
 foo-server-service.url: localhost:9080

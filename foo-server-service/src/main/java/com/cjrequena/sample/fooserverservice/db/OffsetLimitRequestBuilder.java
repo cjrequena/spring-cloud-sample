@@ -105,6 +105,10 @@ public class OffsetLimitRequestBuilder implements Pageable, Serializable {
     return null;
   }
 
+  @Override public Pageable withPage(int pageNumber) {
+    return null;
+  }
+
   @Override
   public boolean hasPrevious() {
     return false;

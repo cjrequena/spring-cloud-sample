@@ -16,6 +16,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -55,7 +57,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @SuppressWarnings("unchecked")
 @Log4j2
 @RestController
-@RequestMapping(value = "/foo-client-service", headers = {"Accept-Version=" + Constant.VND_FOO_SERVICE_V1})
+@RequestMapping(value = "/foo-client-service")
+@Tag(name = "Foo Client Service", description = "Foo Client Service")
+@AllArgsConstructor
 public class FooControllerV1 {
 
   public static final String CACHE_CONTROL = "Cache-Control";

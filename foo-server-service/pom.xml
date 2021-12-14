@@ -68,6 +68,10 @@
         <!-- spring cloud -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-config-client</artifactId>
         </dependency>
         <dependency>
@@ -129,17 +133,17 @@
         <dependency>
             <groupId>com.graphql-java</groupId>
             <artifactId>graphql-spring-boot-starter</artifactId>
-            <version>5.0.2</version>
+            <version>5.0.2</version> <!-- TODO -->
         </dependency>
         <dependency>
             <groupId>com.graphql-java</groupId>
             <artifactId>graphiql-spring-boot-starter</artifactId>
-            <version>5.0.2</version>
+            <version>5.0.2</version> <!-- TODO -->
         </dependency>
         <dependency>
             <groupId>com.graphql-java</groupId>
             <artifactId>graphql-java-tools</artifactId>
-            <version>5.2.4</version>
+            <version>5.2.4</version> <!-- TODO -->
         </dependency>
         <!-- database -->
         <dependency>
@@ -188,7 +192,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>${springdoc-openapi-ui.version}</version>
+            <version>${springdoc.version}</version>
         </dependency>
         <!-- -->
         <!-- https://mvnrepository.com/artifact/io.github.openfeign/feign-jackson -->
@@ -284,9 +288,6 @@
                                 <requireJavaVersion>
                                     <version>[${java.version},)</version>
                                 </requireJavaVersion>
-                                <requireMavenVersion>
-                                    <version>[${maven.version},)</version>
-                                </requireMavenVersion>
                             </rules>
                         </configuration>
                     </execution>

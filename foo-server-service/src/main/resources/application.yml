@@ -1,21 +1,3 @@
-# - https://cloud.spring.io/spring-cloud-netflix/
-# - http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
-# - https://github.com/spring-cloud/spring-cloud-config/blob/master/docs/src/main/asciidoc/spring-cloud-config.adoc#quick-start
-# - https://github.com/spring-cloud/spring-cloud-consul/blob/master/docs/src/main/asciidoc/spring-cloud-consul.adoc
-# - https://github.com/spring-cloud/spring-cloud-netflix/blob/master/docs/src/main/asciidoc/spring-cloud-netflix.adoc
-
-# - https://github.com/Netflix
-# - https://github.com/Netflix/ribbon/wiki
-# - https://github.com/Netflix/Hystrix/wiki
-# - https://github.com/Netflix/eureka/wiki
-# - https://github.com/Netflix/Turbine/wiki
-
-#-----------------------------------------------------------------------------------------------
-# PROFILE LOCAL
-#-----------------------------------------------------------------------------------------------
-spring.profiles: local
-spring.main.allow-bean-definition-overriding: true # Enable bean override
-
 # INFO
 info:
   service_name: ${spring.application.name}
@@ -32,6 +14,11 @@ info:
   git.commit.user.name: ${git.commit.user.name}
   git.commit.user.email: ${git.commit.user.email}
   git.remote.origin.url: ${git.remote.origin.url}
+
+spring.main.allow-bean-definition-overriding: true # Enable bean override
+
+---
+spring.config.activate.on-profile: local
 
 # ----------------------------------------
 # ACTUATOR PROPERTIES
